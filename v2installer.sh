@@ -24,8 +24,6 @@ TIMEZONE='America/Los Angeles'
 #
 # Locale
 LOCALE='en_US.UTF-8'
-
-
 #---------------------------------------------------------------------------#
 echo "  __.__                                       "
 echo "  | * |                                   ___ "
@@ -33,92 +31,90 @@ echo " _|___|_                                 _|_|_"
 echo " (*~ ~*)ArchBSPWMInstaller by s22f5 v2.29(*~*)"
 echo "  Made for: | Intel CPU | AMD GPU | SDD Drive "
 echo "  Will Install my Personal BSPWM/Tint2 System "
-sleep 3
+sleep 1
 #---------------------------------------------------------------------------#
 outmsg=(
-"[1] Checking Connection"
-"[1-o] Found working network"
-"[2] Set Keymap"
-"[3] Set NTP-time"
-"[4] Cleared SDD Memory Cells"
-"[5] Nulled Disk"
-"[6] Created EFI partition"
-"[7] Created SWAP partition"
-"[8] Created ROOT partition"
-"[9] Formated partitions"
-"[10] Mounted and Swaped partitions"
-"[11] Got Fasted Mirrors"
-"[12] Installed Essential Packages"
-"[13] Created fstab"
-"[14] Setup System in Chroot"
+"[1] Checking Connection"			#01
+"[2] Set Keymap to $KEYMAP"	 		#02
+"[3] Set NTP-time"				#03
+"[4] Cleared SDD Memory Cells"			#04
+"[5] Nulled $DRIVE"				#05
+"[6] Created EFI partition"			#06
+"[7] Created SWAP partition"			#07
+"[8] Created ROOT partition"			#08
+"[9] Formated partitions"			#09
+"[10] Mounted and Swaped partitions"		#10
+"[11] Got Fasted $MIRROR_COUNTRY Mirror"	#11
+"[12] Installed Essential Packages"		#12
+"[13] Created fstab"				#13
+"[14] Setup System in Chroot"			#14
+"[15] Set ROOT Passsword"			#15
+"[16] Created and Setup $USER_NAME"		#16
+"[17] Set Locale to $LOCALE"			#17
+"[18] Set Permanent Keymap to $KEYMAP"		#18
+"[19] Created Initcpio"				#19
+"[20] Enabled Multilib"				#20
+"[21] Setup Networking"				#21
+"[22] Installed yay"				#22
+"[23] Setup Xbinkeys"				#23
+"[24] Setup Sudo for User"			#24
+"[25] Enabled Autologin for $USER_NAME"		#25
+"[26] Installed GRUB"				#26
+"[27] Copied bash-profile"			#27
+"[28] Copied xinitrc"				#28
+"[29] Copied bspwmrc"				#29
+"[30] Copied Background Image"			#30
+"[31] Copied xprofile"				#31
+"[32] Copied tint2rc"				#32
+"[33] Copied sxhkdrc"				#33
+"[34] Setup jgmenu"				#34
+"[35] Setup gsimplecal"				#35
+"[36] Setup Theme"				#36
+"[37] Set xorg keymap to $KEYMAP"		#37
+"[38] Fixed some Permissions"			#38
+"[39] Unmounted Partitions"			#39
+"[40] !DONE! thanks for using this scripty"	#40
 )
-
-echo ${outmsg[0]}
-sleep 4
-exit
-
-
-
-
-
-
+function output() {
+clear
+printf '%s\n' "${outmsg[@]:0:$1}"
+}
 #Start Install                                                              #
 #1--------------------------------------------------------------------------#
 #check connection
-clear
-echo "[1] Checking Connection"
+output 1
+#
 ping 8.8.8.8 -c 1 >/dev/null 2>&1
 if [ $? != "0" ]
 then
     clear
-    echo "!Network Error!"
+    echo "[E]!Network Error!"
     echo "Fix your Connection"
     exit
 fi
 #
-clear
-echo "[1] Checking Connection"
-echo "[1o] Found working Connection"
 #2--------------------------------------------------------------------------#
 #set live-usb
 loadkeys $KEYMAP
 #
-clear
-echo "[1] Checking Connection"
-echo "[1o] Found working Connection"
-echo "[2] Set Keymap"
+output 2
 #3--------------------------------------------------------------------------#
 #set time to ntp
 timedatectl set-ntp true
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
+output 3
 #4--------------------------------------------------------------------------#
 #clear ssd memory cell
 hdparm --user-master u --security-set-pass pass "$DRIVE"
 hdparm --user-master u --security-erase pass "$DRIVE"
 hdparm -I "$DRIVE"
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
+output 4
 #5--------------------------------------------------------------------------#
 #erase disk
 dd if=/dev/zero of="$DRIVE" bs=100M count=10 status=progress
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
+output 5
 #6--------------------------------------------------------------------------#
 #create EFI partition
 parted "$DRIVE" --script mklabel gpt
@@ -126,43 +122,19 @@ parted "$DRIVE" --script mkpart ESP fat32 1MiB 512MiB
 parted "$DRIVE" --script set 1 boot on
 parted "$DRIVE" --script name 1 efi
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
-echo "[6] Created EFI partition"
+output 6
 #7--------------------------------------------------------------------------#
 #create swap partition
 parted "$DRIVE" --script mkpart linux-swap 512MiB 2598MiB
 parted "$DRIVE" --script name 2 swap
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
-echo "[6] Created EFI partition"
-echo "[7] Created SWAP partition"
+output 7
 #8--------------------------------------------------------------------------#
 #create root partition
 parted "$DRIVE" --script mkpart primary 2598MiB 100%
 parted "$DRIVE" --script name 3 root
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
-echo "[6] Created EFI partition"
-echo "[7] Created SWAP partition"
-echo "[8] Created ROOT partition"
+output 8
 #9--------------------------------------------------------------------------#
 #format root partition
 mkfs.ext4 "$DRIVE"3
@@ -171,97 +143,38 @@ mkswap "$DRIVE"2
 #format EFI partition
 mkfs.fat -F 32 "$DRIVE"1
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
-echo "[6] Created EFI partition"
-echo "[7] Created SWAP partition"
-echo "[8] Created ROOT partition"
-echo "[9] Formated partitions"
+output 9
 #10-------------------------------------------------------------------------#
 #mount root partition
 mount "$DRIVE"3 /mnt
 #swapon swap partition
 swapon "$DRIVE"2
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
-echo "[6] Created EFI partition"
-echo "[7] Created SWAP partition"
-echo "[8] Created ROOT partition"
-echo "[9] Formated partitions"
-echo "[10] Mounted and Swaped partitions"
+output 10
 #11-------------------------------------------------------------------------#
 #get fastest mirrorlist
 reflector --country $MIRROR_COUNTRY -l 10 --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
-echo "[6] Created EFI partition"
-echo "[7] Created SWAP partition"
-echo "[8] Created ROOT partition"
-echo "[9] Formated partitions"
-echo "[10] Mounted and Swaped partitions"
-echo "[11] Got Fasted Mirrors"
+output 11
 #12-------------------------------------------------------------------------#
 #install essential packages
 pacstrap /mnt base linux linux-firmware grub iwd efibootmgr mesa xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip compton gvfs gvfs-mtp thunar sudo bspwm sxhkd vlc alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal network-manager-applet volumeicon wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop firefox rofi wget
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
-echo "[6] Created EFI partition"
-echo "[7] Created SWAP partition"
-echo "[8] Created ROOT partition"
-echo "[9] Formated partitions"
-echo "[10] Mounted and Swaped partitions"
-echo "[11] Got Fasted Mirrors"
-echo "[12] Installed Essential Packages"
-#13--------------------------------------------------------------------------#
+output 12
+#13-------------------------------------------------------------------------#
 #setup fstab
 genfstab -U /mnt >> /mnt/etc/fstab
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
-echo "[6] Created EFI partition"
-echo "[7] Created SWAP partition"
-echo "[8] Created ROOT partition"
-echo "[9] Formated partitions"
-echo "[10] Mounted and Swaped partitions"
-echo "[11] Got Fasted Mirrors"
-echo "[12] Installed Essential Packages"
-echo "[13] Created fstab"
-#14--------------------------------------------------------------------------#
-#setting up system
-#----------------------------------------------------------------------------#
+output 13
+#14-------------------------------------------------------------------------#
 #set root password
 arch-chroot /mnt passwd << EOD
 $ROOT_PASSWORD
 $ROOT_PASSWORD
 EOD
+#
+output 14
+#15-------------------------------------------------------------------------#
 #add main user
 arch-chroot /mnt useradd -m -G users,video,log,rfkill,wheel,tty -s /bin/bash $USER_NAME
 #set main user password
@@ -269,24 +182,44 @@ arch-chroot /mnt passwd $USER_NAME << EOD
 $USER_PASSWORD
 $USER_PASSWORD
 EOD
+# create home directory structures
+arch-chroot /mnt xdg-user-dirs-update
+#
+output 15
+#16-------------------------------------------------------------------------#
 #setting timezone
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 #setting time to bios hwclock
 arch-chroot /mnt hwclock --systohc
+#
+output 16
+#17-------------------------------------------------------------------------#
 #replace locale.gen
 sed -i "s/^#\($LOCALE.*\)/\1/g" /mnt/etc/locale.gen
 #create and edit locale
 echo "$LOCALE" > /mnt/etc/locale.conf
+#generate locale
+arch-chroot /mnt locale-gen
+#
+output 17
+#18-------------------------------------------------------------------------#
 #set permanent keymap
 touch /mnt/etc/vconsole.conf
 echo "KEYMAP=$KEYMAP" > /mnt/etc/vconsole.conf
-#generate locale
-arch-chroot /mnt locale-gen
+#
+output 18
+#19-------------------------------------------------------------------------#
 #create initcpio
 arch-chroot /mnt mkinitcpio -P
+#
+output 19
+#20-------------------------------------------------------------------------#
 #Enable mutlilib mirror
 echo "[multilib]" >> /mnt/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
+#
+output 20
+#21-------------------------------------------------------------------------#
 #create and edit hosts file
 cat > /mnt/etc/hosts << EOF
 127.0.0.1	localhost
@@ -297,17 +230,27 @@ EOF
 arch-chroot /mnt systemctl enable iwd
 arch-chroot /mnt systemctl enable dhcpcd
 arch-chroot /mnt systemctl enable systemd-networkd
-#install yay
-arch-chroot /mnt git clone https://aur.archlinux.org/yay-bin.git /tmp/1 && cp -arf /tmp/1/. . && makepkg -si --noconfirm
-#setup xbinkeys
-xbindkeys --defaults > /home/$USER_NAME/.xbindkeysrc
-#add wheel group to sudoers
-sed -i "s/# \(%wheel ALL=(ALL) ALL\)/\1/g" /mnt/etc/sudoers
 #set system hostname
 touch /mnt/etc/hostname
 echo "$HOSTNAME" > /mnt/etc/hostname
-# create home directory structures
-arch-chroot /mnt xdg-user-dirs-update
+#
+output 21
+#22-------------------------------------------------------------------------#
+#install yay
+arch-chroot /mnt git clone https://aur.archlinux.org/yay-bin.git /tmp/1 && cp -arf /tmp/1/. . && makepkg -si --noconfirm
+#
+output 22
+#23-------------------------------------------------------------------------#
+#setup xbinkeys
+xbindkeys --defaults > /home/$USER_NAME/.xbindkeysrc
+#
+output 23
+#24-------------------------------------------------------------------------#
+#add wheel group to sudoers
+sed -i "s/# \(%wheel ALL=(ALL) ALL\)/\1/g" /mnt/etc/sudoers
+#
+output 24
+#25-------------------------------------------------------------------------#
 #enable autologin 
 arch-chroot /mnt mkdir -p /etc/systemd/system/getty@tty1.service.d/
 cat > /mnt/etc/systemd/system/getty@tty1.service.d/autologin.conf <<EOF
@@ -316,31 +259,18 @@ ExecStart=
 ExecStart=-/sbin/agetty --autologin $USER_NAME --noclear %I 38400 linux
 EOF
 arch-chroot /mnt systemctl enable getty@tty1.service
+#
+output 25
+#26-------------------------------------------------------------------------#
 #install and setup grub2
 arch-chroot /mnt mkdir /boot/EFI
 arch-chroot /mnt mount "$DRIVE"1 /boot/EFI
 arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
-echo "[6] Created EFI partition"
-echo "[7] Created SWAP partition"
-echo "[8] Created ROOT partition"
-echo "[9] Formated partitions"
-echo "[10] Mounted and Swaped partitions"
-echo "[11] Got Fasted Mirrors"
-echo "[12] Installed Essential Packages"
-echo "[13] Created fstab"
-echo "[14] Setup System in Chroot"
-sleep 1
-#----------------------------------------------------------------------------#
-#copy configs
+output 26
+#27-------------------------------------------------------------------------#
+#copy bash_profile
 rm /mnt/home/$USER_NAME/.bash_profile
 cat >> "/mnt/home/$USER_NAME/.bash_profile" <<\EOF
 #add  ~/.local/bin to PATH
@@ -349,6 +279,9 @@ echo $PATH | grep -q "$HOME/.local/bin:" || export PATH="$HOME/.local/bin:$PATH"
 #automatically run startx when logging in on tty1
 [ -z "$DISPLAY" ] && [ $XDG_VTNR -eq 1 ] && startx
 EOF
+#
+output 27
+#28-------------------------------------------------------------------------#
 #setup startx
 cat >> "/mnt/home/$USER_NAME/.xinitrc" <<\EOF
 #!/bin/sh
@@ -374,6 +307,9 @@ volumeicon &
 #launch session, commands below this line will be ignored
 exec bspwm
 EOF
+#
+output 28
+#29-------------------------------------------------------------------------#
 #setup bspwm config
 mkdir -p /mnt/home/$USER_NAME/.config/bspwm/
 cat >> /mnt/home/$USER_NAME/.config/bspwm/bspwmrc << EOF
@@ -398,9 +334,15 @@ bspc config pointer_action2 resize_side
 bspc config pointer_action3 resize_corner
 
 EOF
+#
+output 29
+#30-------------------------------------------------------------------------#
 #copy bg
 mkdir -p /mnt/home/$USER_NAME/Pictures
 cp bg.png /mnt/home/$USER_NAME/Pictures/
+#
+output 30
+#31-------------------------------------------------------------------------#
 #.xprofile
 cat >> /mnt/home/$USER_NAME/.xprofile <<\EOF
 #!/bin/sh
@@ -412,7 +354,11 @@ export PATH="$HOME/.local/bin:$PATH"
 
 
 EOF
+#add feh to .xprofile
 echo "feh --bg-fill /home/$USER_NAME/Pictures/bg.png" >> /mnt/home/$USER_NAME/.xprofile
+#
+output 31
+#31-------------------------------------------------------------------------#
 #setup tint2rc
 mkdir -p /mnt/home/$USER_NAME/.config/tint2
 cat >> /mnt/home/$USER_NAME/.config/tint2/tint2rc <<\EOF
@@ -630,7 +576,9 @@ tooltip_background_id = 6
 tooltip_font_color = #d8d8d8 100
 tooltip_font = sans 10
 EOF
-
+#
+output 32
+#33-------------------------------------------------------------------------#
 #setup sxhkd
 mkdir -p /mnt/home/$USER_NAME/.config/sxhkd
 cat >> /mnt/home/$USER_NAME/.config/sxhkd/sxhkdrc <<\EOF
@@ -781,11 +729,12 @@ super + d
 	
 
 EOF
-echo "test"
+#
+output 33
+#34-------------------------------------------------------------------------#
 sleep 3
 #jgmenu
 mkdir -p /mnt/home/$USER_NAME/.config/jgmenu
-
 cat >> /mnt/home/$USER_NAME/.config/jgmenu/append.csv <<\EOF
 ^sep()
 Exit,^checkout(exit),system-shutdown
@@ -795,14 +744,12 @@ suspend,systemctl -i suspend,system-log-out
 reboot,systemctl -i reboot,system-reboot
 poweroff,systemctl -i poweroff,system-shutdown
 EOF
-
 cat >> /mnt/home/$USER_NAME/.config/jgmenu/prepend.csv <<\EOF
 Firefox,firefox,firefox
 File manager,thunar,system-file-manager
 Terminal,xterm,utilities-terminal
 ^sep()
 EOF
-
 cat >> /mnt/home/$USER_NAME/.config/jgmenu/jgmenurc <<\EOF
 # jgmenurc
 
@@ -869,9 +816,10 @@ color_sep_fg         = #919BA0 40
 
 #csv_name_format     = %n (%g)
 EOF
-
-
-#gsimplecal
+#
+output 34
+#35-------------------------------------------------------------------------#
+#fix gsimplecal
 mkdir -p /mnt/home/$USER_NAME/.config/gsimplecal/
 cat >> /mnt/home/$USER_NAME/.config/gsimplecal/config << EOF
 show_timezones = 1
@@ -889,11 +837,12 @@ mainwindow_yoffset = 30
 mainwindow_xoffset = 0
 clock_format = %a %d %b %H:%M
 EOF
-
-#archlabs
+#
+output 35
+#36-------------------------------------------------------------------------#
+#setup themes
 cp -r themes/ArchLabs-Dark/ /mnt/usr/share/themes
 cp -r icons/ArchLabs-Dark/ /mnt/usr/share/icons
-
 mkdir -p "/mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/"
 cat >> "/mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/xsettings.xml" <<\EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -941,7 +890,6 @@ cat >> "/mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/xsettings.xml" <<
   </property>
 </channel>
 EOF
-
 #gtk-3.0
 mkdir -p "/mnt/home/$USER_NAME/.config/gtk-3.0/"
 cat >> "/mnt/home/$USER_NAME/.config/gtk-3.0/settings.ini" << EOF
@@ -961,40 +909,35 @@ gtk-xft-antialias=1
 gtk-xft-hinting=1
 gtk-xft-hintstyle=hintfull
 EOF
-
+#
+output 36
+#37-------------------------------------------------------------------------#
 #set xorg keymap
 cat >> /mnt/etc/X11/xorg.conf.d/00-keyboard.conf << EOF
 Section "InputClass"
     Identifier 		"system-keyboard"
     MatchIsKeyboard	"on"
-    Option		"XkbLayout" "at"
+    Option		"XkbLayout" "$KEYMAP"
 EndSection
 EOF
-
 arch-chroot /mnt localectl set-x11-keymap "$KEYMAP"
+#
+output 37
+#38-------------------------------------------------------------------------#
 #set owner
 arch-chroot /mnt chown -R $USER_NAME home/$USER_NAME/
+#
+output 38
+#39-------------------------------------------------------------------------#
 #unmount partitions
 swapoff "$DRIVE"2
 umount "$DRIVE"1
 umount "$DRIVE"3
 #
-clear
-echo "[1] Checking Connection"
-echo "[1-o] Found working network"
-echo "[2] Set Keymap"
-echo "[3] Set NTP-time"
-echo "[4] Cleared SDD Memory Cells"
-echo "[5] Nulled Disk"
-echo "[6] Created EFI partition"
-echo "[7] Created SWAP partition"
-echo "[8] Created ROOT partition"
-echo "[9] Formated partitions"
-echo "[10] Mounted and Swaped partitions"
-echo "[11] Got Fasted Mirrors"
-echo "[12] Installed Essential Packages"
-echo "[13] Created fstab"
-echo "[14] Setup System in Chroot"
-echo "[15] Copied Config Files"
-sleep 1
-echo "[16] DONE thanks for using this scripty"
+output 39
+##-------------------------------------------------------------------------##
+output 40
+sleep 3
+#reboot
+exit
+#--------------------------------------------------------------------------##
