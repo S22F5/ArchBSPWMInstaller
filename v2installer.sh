@@ -292,7 +292,7 @@ output 25
 #install and setup grub2
 arch-chroot /mnt mkdir /boot/EFI
 arch-chroot /mnt mount "$DRIVE"1 /boot/EFI
-arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck --removable --efi-directory=/boot/EFI
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 #
 output 26
