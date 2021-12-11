@@ -1,3 +1,4 @@
+#!/bin/sh
 # Install Drive (!!!will be wiped!!!)
 DRIVE='/dev/sdX'
 #
@@ -79,6 +80,17 @@ function output() {
 clear
 printf '%s\n' "${outmsg[@]:0:$1}"
 }
+function YNDiag() {
+	while $true ; do
+		echo "[y/n]"
+		read response
+		case $response in
+			[Yy]* ) return 0 ;;
+			[Nn]* ) return 1 ;;
+			*) echo invalid response! ;;
+		esac
+	done
+}
 #Start Install                                                              #
 #1--------------------------------------------------------------------------#
 #check connection
@@ -89,8 +101,12 @@ if [ $? != "0" ]
 then
     clear
     echo "[E]!Network Error!"
-    echo "Fix your Connection"
-    exit
+    echo "You might not be connected to the internet."
+    echo "Contine anyway?"
+	YNDiag
+	if [ $? == 1 ] ; then
+		exit
+	fi
 fi
 #
 #2--------------------------------------------------------------------------#
