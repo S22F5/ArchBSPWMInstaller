@@ -120,6 +120,12 @@ timedatectl set-ntp true
 #
 output 3
 #4--------------------------------------------------------------------------#
+#Check if disk exists
+if [ ! -e "$DRIVE" ]
+then
+	echo "[E] Drive ""$DRIVE"" does not exist!"
+	exit
+fi
 #clear ssd memory cell
 hdparm --user-master u --security-set-pass pass "$DRIVE"
 hdparm --user-master u --security-erase pass "$DRIVE"
