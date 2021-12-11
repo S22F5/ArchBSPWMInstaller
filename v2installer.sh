@@ -269,7 +269,7 @@ arch-chroot /mnt git clone https://aur.archlinux.org/yay-bin.git /tmp/1 && cp -a
 output 22
 #23-------------------------------------------------------------------------#
 #setup xbinkeys
-xbindkeys --defaults > /home/$USER_NAME/.xbindkeysrc
+arch-chroot /mnt xbindkeys --defaults > /mnt/home/$USER_NAME/.xbindkeysrc
 #
 output 23
 #24-------------------------------------------------------------------------#
