@@ -151,6 +151,11 @@ parted "$DRIVE" --script mkpart primary 2598MiB 100%
 parted "$DRIVE" --script name 3 root
 #
 output 8
+# There are 2 different schemes for naming partitions. NVME for example putes another p between the drive name and the partition number
+# Find out which scheme is used
+if [ ! -e "$DRIVE"1 ] ; then 
+	DRIVE="$DRIVE""p"
+fi
 #9--------------------------------------------------------------------------#
 #format root partition
 mkfs.ext4 "$DRIVE"3
