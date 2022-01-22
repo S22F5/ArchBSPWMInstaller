@@ -1,6 +1,6 @@
 #!/bin/sh
 # Install Drive (!!!will be wiped!!!)
-DRIVE='/dev/sdX'
+DRIVE='/dev/sda'
 #
 # Hostname
 HOSTNAME='hostname'
@@ -15,21 +15,28 @@ USER_NAME='user'
 USER_PASSWORD='pass'
 #
 # Keymap
-KEYMAP='en'
+KEYMAP='de'
 #
 # Mirror Country
-MIRROR_COUNTRY='Canada'
+MIRROR_COUNTRY='Austria'
 #
 # Timezone in "Zone/City" Format
-TIMEZONE='America/Los Angeles'
+TIMEZONE='Europe/Vienna'
 #
 # Locale
 LOCALE='en_US.UTF-8'
+# UEFI
+UEFI=1
+#---------------------------------------------------------------------------#
+#check for uefi
+if [ ! -d "/sys/firmware/efi" ]; then
+	  UEFI=0
+fi
 #---------------------------------------------------------------------------#
 echo "  __.__                                       "
-echo "  | * |                                   ___ "
-echo " _|___|_                                 _|_|_"
-echo " (*~ ~*)ArchBSPWMInstaller by s22f5 v2.29(*~*)"
+echo "  | * |     ArchBSPWMInstaller v2.31b     ___ "
+echo " _|___|_              by                 _|_|_"
+echo " (*~ ~*)          s22f5&Jears            (*~*)"
 echo "  Made for: | Intel CPU | AMD GPU | SDD Drive "
 echo "  Will Install my Personal BSPWM/Tint2 System "
 sleep 1
@@ -126,49 +133,77 @@ then
 	echo "[E] Drive ""$DRIVE"" does not exist!"
 	exit
 fi
-#clear ssd memory cell
-hdparm --user-master u --security-set-pass pass "$DRIVE"
-hdparm --user-master u --security-erase pass "$DRIVE"
-hdparm -I "$DRIVE"
+##clear ssd memory cell
+#hdparm --user-master u --security-set-pass pass "$DRIVE"
+#hdparm --user-master u --security-erase pass "$DRIVE"
+#hdparm -I "$DRIVE"
 #
 output 4
 #5--------------------------------------------------------------------------#
 #erase disk
 dd if=/dev/zero of="$DRIVE" bs=100M count=10 status=progress
+parted "$DRIVE" --script -- mklabel gpt
+#parted "$DRIVE" --script -- mkpart primary 0 -1
+
 #
 output 5
 #6--------------------------------------------------------------------------#
-#create EFI partition
-parted "$DRIVE" --script mklabel gpt
-parted "$DRIVE" --script mkpart ESP fat32 1MiB 512MiB
-parted "$DRIVE" --script set 1 boot on
-parted "$DRIVE" --script name 1 efi
-#
-output 6
+if [[ $UEFI -gt 1 ]]
+then
+	#create EFI partition
+	parted "$DRIVE" --script mklabel gpt
+	parted "$DRIVE" --script mkpart ESP fat32 1MiB 512MiB
+	parted "$DRIVE" --script set 1 boot on
+	parted "$DRIVE" --script name 1 efi
+	#
+	output 6
+else
+	#create BIOS partition
+	#parted "$DRIVE" --script mklabel msdos
+	parted "$DRIVE" --script mklabel gpt
+	parted "$DRIVE" --script mkpart primary 1MiB 8MiB
+	parted "$DRIVE" --script set 1 boot off
+	parted "$DRIVE" --script set 1 bios_grub on
+	output 5
+	echo "[6] Created BIOS partition"
+fi
 #7--------------------------------------------------------------------------#
+if [[ $UEFI -gt 1 ]]
+then
+	BASE=512
+else
+	BASE=8
+fi
 #create swap partition
-parted "$DRIVE" --script mkpart linux-swap 512MiB 2598MiB
+parted "$DRIVE" --script mkpart linux-swap $BASE"MiB" $((2086+$BASE))"MiB"
 parted "$DRIVE" --script name 2 swap
 #
 output 7
 #8--------------------------------------------------------------------------#
-#create root partition
-parted "$DRIVE" --script mkpart primary 2598MiB 100%
+#create  root partition
+parted "$DRIVE" --script mkpart primary $((2086+$BASE))"MiB" 100%
 parted "$DRIVE" --script name 3 root
 #
 output 8
-# There are 2 different schemes for naming partitions. NVME for example putes another p between the drive name and the partition number
+#--------------------------------------------------------------------------#
+#why is this here! pls move up to vars#
+#
+# There are 2 different schemes for naming partitions.
+# NVME for example puts another p between the drive name and the partition number
 # Find out which scheme is used
-if [ ! -e "$DRIVE"1 ] ; then 
-	DRIVE="$DRIVE""p"
-fi
+#if [ ! -e "$DRIVE"1 ] ; then 
+#	DRIVE="$DRIVE""p"
+#fi
 #9--------------------------------------------------------------------------#
 #format root partition
 mkfs.ext4 "$DRIVE"3
 #format swap partition
 mkswap "$DRIVE"2
+if [[ $UEFI -gt 1 ]]
+then
 #format EFI partition
 mkfs.fat -F 32 "$DRIVE"1
+fi
 #
 output 9
 #10-------------------------------------------------------------------------#
@@ -185,7 +220,7 @@ reflector --country $MIRROR_COUNTRY -l 10 --age 12 --protocol https --sort rate 
 output 11
 #12-------------------------------------------------------------------------#
 #install essential packages
-pacstrap /mnt base linux linux-firmware grub iwd efibootmgr mesa xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip compton gvfs gvfs-mtp thunar sudo bspwm sxhkd vlc alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal network-manager-applet volumeicon wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop firefox rofi wget
+pacstrap /mnt base linux linux-firmware grub mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip compton gvfs gvfs-mtp thunar sudo bspwm sxhkd vlc alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal network-manager-applet volumeicon wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop firefox rofi wget
 #
 output 12
 #13-------------------------------------------------------------------------#
@@ -263,10 +298,10 @@ echo "$HOSTNAME" > /mnt/etc/hostname
 #
 output 21
 #22-------------------------------------------------------------------------#
-#install yay
-arch-chroot /mnt git clone https://aur.archlinux.org/yay-bin.git /tmp/1 && cp -arf /tmp/1/. . && makepkg -si --noconfirm
-#
-output 22
+##install yay
+#arch-chroot /mnt bash -c "git clone https://aur.archlinux.org/yay-bin.git /tmp/1 && cp -arf /tmp/1/. . && makepkg -si --noconfirm"
+##
+##output 22
 #23-------------------------------------------------------------------------#
 #setup xbinkeys
 arch-chroot /mnt xbindkeys --defaults > /mnt/home/$USER_NAME/.xbindkeysrc
@@ -289,11 +324,18 @@ arch-chroot /mnt systemctl enable getty@tty1.service
 #
 output 25
 #26-------------------------------------------------------------------------#
-#install and setup grub2
-arch-chroot /mnt mkdir /boot/EFI
-arch-chroot /mnt mount "$DRIVE"1 /boot/EFI
-arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck --removable --efi-directory=/boot/EFI
-arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+if [[ $UEFI -gt 1 ]]
+then
+	#install and setup grub2 for uefi
+	arch-chroot /mnt mkdir /boot/EFI
+	arch-chroot /mnt mount "$DRIVE"1 /boot/EFI
+	arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+else
+	#install and setup grub2 for mbr/bios
+	arch-chroot /mnt grub-install --target=i386-pc "$DRIVE"
+	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+fi
 #
 output 26
 #27-------------------------------------------------------------------------#
@@ -759,7 +801,6 @@ EOF
 #
 output 33
 #34-------------------------------------------------------------------------#
-sleep 3
 #jgmenu
 mkdir -p /mnt/home/$USER_NAME/.config/jgmenu
 cat >> /mnt/home/$USER_NAME/.config/jgmenu/append.csv <<\EOF
@@ -964,7 +1005,6 @@ umount "$DRIVE"3
 output 39
 ##-------------------------------------------------------------------------##
 output 40
-sleep 3
 #reboot
 exit
 #--------------------------------------------------------------------------##
