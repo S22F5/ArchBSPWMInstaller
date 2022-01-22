@@ -329,7 +329,7 @@ then
 	#install and setup grub2 for uefi
 	arch-chroot /mnt mkdir /boot/EFI
 	arch-chroot /mnt mount "$DRIVE"1 /boot/EFI
-	arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+	arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --removable
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 else
 	#install and setup grub2 for mbr/bios
