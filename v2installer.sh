@@ -34,7 +34,7 @@ if [ ! -d "/sys/firmware/efi" ]; then
 fi
 #---------------------------------------------------------------------------#
 echo "  __.__                                       "
-echo "  | * |     ArchBSPWMInstaller v2.31b     ___ "
+echo "  | * |     ArchBSPWMInstaller v2.32a     ___ "
 echo " _|___|_              by                 _|_|_"
 echo " (*~ ~*)          s22f5&Jears            (*~*)"
 echo "  Made for: | Intel CPU | AMD GPU | SDD Drive "
