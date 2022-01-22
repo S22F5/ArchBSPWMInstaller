@@ -15,10 +15,10 @@ USER_NAME='user'
 USER_PASSWORD='pass'
 #
 # Keymap
-KEYMAP='de'
+KEYMAP='us'
 #
 # Mirror Country
-MIRROR_COUNTRY='Austria'
+MIRROR_COUNTRY='Germany'
 #
 # Timezone in "Zone/City" Format
 TIMEZONE='Europe/Vienna'
@@ -133,18 +133,12 @@ then
 	echo "[E] Drive ""$DRIVE"" does not exist!"
 	exit
 fi
-##clear ssd memory cell
-#hdparm --user-master u --security-set-pass pass "$DRIVE"
-#hdparm --user-master u --security-erase pass "$DRIVE"
-#hdparm -I "$DRIVE"
 #
 output 4
 #5--------------------------------------------------------------------------#
 #erase disk
 dd if=/dev/zero of="$DRIVE" bs=100M count=10 status=progress
 parted "$DRIVE" --script -- mklabel gpt
-#parted "$DRIVE" --script -- mkpart primary 0 -1
-
 #
 output 5
 #6--------------------------------------------------------------------------#
@@ -185,16 +179,7 @@ parted "$DRIVE" --script mkpart primary $((2086+$BASE))"MiB" 100%
 parted "$DRIVE" --script name 3 root
 #
 output 8
-#--------------------------------------------------------------------------#
-#why is this here! pls move up to vars#
-#
-# There are 2 different schemes for naming partitions.
-# NVME for example puts another p between the drive name and the partition number
-# Find out which scheme is used
-#if [ ! -e "$DRIVE"1 ] ; then 
-#	DRIVE="$DRIVE""p"
-#fi
-#9--------------------------------------------------------------------------#
+#---------------------------------------------------------------------------#
 #format root partition
 mkfs.ext4 "$DRIVE"3
 #format swap partition
