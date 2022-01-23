@@ -79,9 +79,10 @@ outmsg=(
 "[35] Setup gsimplecal"				#35
 "[36] Setup Theme"				#36
 "[37] Set xorg keymap to $KEYMAP"		#37
-"[38] Fixed some Permissions"			#38
-"[39] Unmounted Partitions"			#39
-"[40] !DONE! thanks for using this scripty"	#40
+"[38] Setup Thunar Custom actions"		#38
+"[39] Fixed some Permissions"			#39
+"[40] Unmounted Partitions"			#40
+"[41] !DONE! thanks for using this scripty"	#41
 )
 function output() {
 clear
@@ -593,7 +594,7 @@ launcher_background_id = 5
 launcher_icon_background_id = 0
 launcher_icon_size = 16
 launcher_icon_asb = 100 0 0
-launcher_icon_theme = ArchLabs-Dark
+launcher_icon_theme = Adwaita-dark
 launcher_icon_theme_override = 0
 startup_notifications = 1
 launcher_tooltip = 1
@@ -909,61 +910,59 @@ EOF
 output 35
 #36-------------------------------------------------------------------------#
 #setup themes
-cp -r themes/ArchLabs-Dark/ /mnt/usr/share/themes
-cp -r icons/ArchLabs-Dark/ /mnt/usr/share/icons
 mkdir -p "/mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/"
 cat >> "/mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/xsettings.xml" <<\EOF
 <?xml version="1.0" encoding="UTF-8"?>
 
 <channel name="xsettings" version="1.0">
-  <property name="Net" type="empty">
-    <property name="ThemeName" type="string" value="ArchLabs-Dark"/>
-    <property name="IconThemeName" type="string" value="ArchLabs-Dark"/>
-    <property name="DoubleClickTime" type="empty"/>
-    <property name="DoubleClickDistance" type="empty"/>
-    <property name="DndDragThreshold" type="empty"/>
-    <property name="CursorBlink" type="empty"/>
-    <property name="CursorBlinkTime" type="empty"/>
-    <property name="SoundThemeName" type="empty"/>
-    <property name="EnableEventSounds" type="empty"/>
-    <property name="EnableInputFeedbackSounds" type="empty"/>
-  </property>
-  <property name="Xft" type="empty">
-    <property name="DPI" type="empty"/>
-    <property name="Antialias" type="empty"/>
-    <property name="Hinting" type="empty"/>
-    <property name="HintStyle" type="empty"/>
-    <property name="RGBA" type="empty"/>
-  </property>
-  <property name="Gtk" type="empty">
-    <property name="CanChangeAccels" type="empty"/>
-    <property name="ColorPalette" type="empty"/>
-    <property name="FontName" type="empty"/>
-    <property name="MonospaceFontName" type="empty"/>
-    <property name="IconSizes" type="empty"/>
-    <property name="KeyThemeName" type="empty"/>
-    <property name="ToolbarStyle" type="empty"/>
-    <property name="ToolbarIconSize" type="empty"/>
-    <property name="MenuImages" type="empty"/>
-    <property name="ButtonImages" type="empty"/>
-    <property name="MenuBarAccel" type="empty"/>
-    <property name="CursorThemeName" type="empty"/>
-    <property name="CursorThemeSize" type="empty"/>
-    <property name="DecorationLayout" type="empty"/>
-    <property name="DialogsUseHeader" type="empty"/>
-    <property name="TitlebarMiddleClick" type="empty"/>
-  </property>
-  <property name="Gdk" type="empty">
-    <property name="WindowScalingFactor" type="empty"/>
-  </property>
+<property name="Net" type="empty">
+<property name="ThemeName" type="string" value="Adwaita-dark"/>
+<property name="IconThemeName" type="string" value="Adwaita-dark"/>
+<property name="DoubleClickTime" type="empty"/>
+<property name="DoubleClickDistance" type="empty"/>
+<property name="DndDragThreshold" type="empty"/>
+<property name="CursorBlink" type="empty"/>
+<property name="CursorBlinkTime" type="empty"/>
+<property name="SoundThemeName" type="empty"/>
+<property name="EnableEventSounds" type="empty"/>
+<property name="EnableInputFeedbackSounds" type="empty"/>
+</property>
+<property name="Xft" type="empty">
+<property name="DPI" type="empty"/>
+<property name="Antialias" type="empty"/>
+<property name="Hinting" type="empty"/>
+<property name="HintStyle" type="empty"/>
+<property name="RGBA" type="empty"/>
+</property>
+<property name="Gtk" type="empty">
+<property name="CanChangeAccels" type="empty"/>
+<property name="ColorPalette" type="empty"/>
+<property name="FontName" type="empty"/>
+<property name="MonospaceFontName" type="empty"/>
+<property name="IconSizes" type="empty"/>
+<property name="KeyThemeName" type="empty"/>
+<property name="ToolbarStyle" type="empty"/>
+<property name="ToolbarIconSize" type="empty"/>
+<property name="MenuImages" type="empty"/>
+<property name="ButtonImages" type="empty"/>
+<property name="MenuBarAccel" type="empty"/>
+<property name="CursorThemeName" type="empty"/>
+<property name="CursorThemeSize" type="empty"/>
+<property name="DecorationLayout" type="empty"/>
+<property name="DialogsUseHeader" type="empty"/>
+<property name="TitlebarMiddleClick" type="empty"/>
+</property>
+<property name="Gdk" type="empty">
+<property name="WindowScalingFactor" type="empty"/>
+</property>
 </channel>
 EOF
 #gtk-3.0
 mkdir -p "/mnt/home/$USER_NAME/.config/gtk-3.0/"
 cat >> "/mnt/home/$USER_NAME/.config/gtk-3.0/settings.ini" << EOF
 [Settings]
-gtk-theme-name=ArchLabs-Dark
-gtk-icon-theme-name=ArchLabs-Dark
+gtk-theme-name=Adwaita-dark
+gtk-icon-theme-name=Adwaita-dark
 gtk-font-name=Monospace 11
 gtk-cursor-theme-name=Adwaita
 gtk-cursor-theme-size=0
@@ -983,28 +982,118 @@ output 36
 #set xorg keymap
 cat >> /mnt/etc/X11/xorg.conf.d/00-keyboard.conf << EOF
 Section "InputClass"
-    Identifier 		"system-keyboard"
-    MatchIsKeyboard	"on"
-    Option		"XkbLayout" "$KEYMAP"
+Identifier 		"system-keyboard"
+MatchIsKeyboard	"on"
+Option		"XkbLayout" "$KEYMAP"
 EndSection
 EOF
 arch-chroot /mnt localectl set-x11-keymap "$KEYMAP"
 #
 output 37
 #38-------------------------------------------------------------------------#
+mkdir -p "/mnt/home/$USER_NAME/.config/Thunar"
+cat >> /mnt/home/$USER_NAME/.config/Thunar/uca.xml << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+<action>
+	<icon>utilities-terminal</icon>
+	<name>Open Terminal Here</name>
+	<unique-id>1638438376394053-1</unique-id>
+	<command>exo-open --working-directory %f --launch TerminalEmulator</command>
+	<description>Example for a custom action</description>
+	<patterns>*</patterns>
+	<startup-notify/>
+	<directories/>
+</action>
+<action>
+	<icon>insert-image</icon>
+	<name>Get Videos first Frame</name>
+	<unique-id>1640441129894017-1</unique-id>
+	<command>ffmpeg -i %f -vframes 1 %n.jpg</command>
+	<description></description>
+	<patterns>*</patterns>
+	<video-files/>
+</action>
+<action>
+	<icon>org.gnome.gThumb</icon>
+	<name>Open Gthumb here</name>
+	<unique-id>1640461697525920-1</unique-id>
+	<command>gthumb %f</command>
+	<description></description>
+	<patterns>*</patterns>
+	<directories/>
+</action>
+<action>
+	<icon>num-lock-on</icon>
+	<name>NumberMedia</name>
+	<unique-id>1641340437960733-2</unique-id>
+	<command>NumberMedia</command>
+	<description></description>
+	<patterns>*</patterns>
+	<directories/>
+</action>
+<action>
+	<icon>trashindicator</icon>
+	<name>Clear Thumbnails</name>
+	<unique-id>1641341845681351-3</unique-id>
+	<command>rm ~/.cache/thumbnails/normal/*</command>
+	<description></description>
+	<patterns>*</patterns>
+	<directories/>
+</action>
+<action>
+	<icon>object-rotate-right</icon>
+	<name>Rotate Video by 90°</name>
+	<unique-id>1641352800187614-1</unique-id>
+	<command>ffmpeg -i %f -vf &quot;transpose=1&quot; 90%n</command>
+	<description></description>
+	<patterns>*</patterns>
+	<video-files/>
+</action>
+<action>
+	<icon>object-rotate-left</icon>
+	<name>Rotate Video -90°</name>
+	<unique-id>1641352923316309-2</unique-id>
+	<command>ffmpeg -i %f -vf &quot;transpose=1,transpose=1,transpose=1&quot; 270%n</command>
+	<description></description>
+	<patterns>*</patterns>
+	<video-files/>
+</action>
+<action>
+	<icon>archive</icon>
+	<name>Extract Here</name>
+	<unique-id>1642258289755424-1</unique-id>
+	<command>7z x -mmt6 %f &amp;&amp; touch done &amp;&amp; sleep 3 &amp;&amp; rm done</command>
+	<description></description>
+	<patterns>*.7z;*.zip;*.gz;*.tar;*.tar.gz;*.tar.xz;*.tar.bz;*.rar;*.lha;*.arj;*.cab;*.binb;*.iso</patterns>
+	<other-files/>
+</action>
+<action>
+	<icon>wine</icon>
+	<name>Run in Japanese Prefix</name>
+	<unique-id>1642590455883374-1</unique-id>
+	<command>LANG=&quot;ja_JP.UTF8&quot; wine %f</command>
+	<description></description>
+	<patterns>*.exe</patterns>
+	<other-files/>
+</action>
+</actions>
+EOF
+output 38
+#39-------------------------------------------------------------------------#
 #set owner
 arch-chroot /mnt chown -R $USER_NAME home/$USER_NAME/
 #
-output 38
-#39-------------------------------------------------------------------------#
+output 39
+#40-------------------------------------------------------------------------#
 #unmount partitions
 swapoff "$DRIVE"2
 umount "$DRIVE"1
 umount "$DRIVE"3
 #
-output 39
-##-------------------------------------------------------------------------##
 output 40
+##-------------------------------------------------------------------------##
+output 41
 #reboot
 exit
 #--------------------------------------------------------------------------##
