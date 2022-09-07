@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Install Drive (!!!will be wiped!!!)
 DRIVE='/dev/sda'
 #
@@ -88,9 +88,9 @@ clear
 printf '%s\n' "${outmsg[@]:0:$1}"
 }
 function YNDiag() {
-	while $true ; do
+	while : ; do
 		echo "[y/n]"
-		read response
+		read -r response
 		case $response in
 			[Yy]* ) return 0 ;;
 			[Nn]* ) return 1 ;;
@@ -103,8 +103,8 @@ function YNDiag() {
 #check connection
 output 1
 #
-ping 8.8.8.8 -c 1 >/dev/null 2>&1
-if [ $? != "0" ]
+
+if ! ping 8.8.8.8 -c 1 >/dev/null 2>&1;
 then
     clear
     echo "[E]!Network Error!"
@@ -169,13 +169,13 @@ else
 	BASE=8
 fi
 #create swap partition
-parted "$DRIVE" --script mkpart linux-swap $BASE"MiB" $((2086+$BASE))"MiB"
+parted "$DRIVE" --script mkpart linux-swap $BASE"MiB" $((2086+BASE))"MiB"
 parted "$DRIVE" --script name 2 swap
 #
 output 7
 #8--------------------------------------------------------------------------#
 #create  root partition
-parted "$DRIVE" --script mkpart primary $((2086+$BASE))"MiB" 100%
+parted "$DRIVE" --script mkpart primary $((2086+BASE))"MiB" 100%
 parted "$DRIVE" --script name 3 root
 #
 output 8
