@@ -13,7 +13,7 @@
 - Step 5: ```cd ArchBSPWMInstaller && ./v2installer.sh```
 
 
-#### Using the script on indepented install medium
+#### Using the script on an indepented install medium
 - Step 1: Use the any Arch ISO to create a [live USB](https://wiki.archlinux.org/title/USB_flash_installation_medium) or [burn it to
  a DVD](https://wiki.archlinux.org/title/Optical_disc_drive#Burning)
 - Step 2: [Boot up Arch Linux](https://wiki.archlinux.org/title/Installation_guide#Boot_the_live_environment)
