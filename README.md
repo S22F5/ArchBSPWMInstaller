@@ -1,4 +1,9 @@
-# ArchBSPWMInstaller
+<div align="center">
+  <picture>
+<img src=.github/images/archinstaller-logo.svg>
+ </picture>
+ </div>
+
 ## **Using this Installer:**
 #### Using the Custom ISO with included Script and Files
 - Step 1: Use the provided [ISO](https://github.com/S22F5/ArchBSPWMInstaller/releases/download/v2.31b/archlinux-2022.01.22-x86_64_InstallerIncluded.iso) to create a [live USB](https://wiki.archlinux.org/title/USB_flash_installation_medium) or [burn it to a DVD](https://wiki.archlinux.org/title/Optical_disc_drive#Burning)
