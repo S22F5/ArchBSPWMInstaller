@@ -1,6 +1,6 @@
 <div align="center">
   <picture>
-<img src=".github/images/archinstaller-logo.svg">
+<img src=".github/images/archinstaller-logo.png">
  </picture>
  </div>
 
