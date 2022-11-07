@@ -1,8 +1,6 @@
 <div align="center">
-  <picture>
 <img src=".github/images/logo_lightmode.png#gh-light-mode-only">
 <img src=".github/images/logo_lightmode.png#gh-dark-mode-only">
- </picture>
  </div>
 
 ## **Using this Installer:**
