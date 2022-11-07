@@ -1,5 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/images/logo_lightmode.png">
+  <source media="(prefers-color-scheme: dark)" srcset=".github/images/logo_darkmode.png">
+  <img src=".github/images/logo_lightmode.png">
 </picture>
 
 ## **Using this Installer:**
