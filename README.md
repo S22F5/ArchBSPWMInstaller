@@ -1,7 +1,7 @@
-<div align="center">
-<img src=".github/images/logo_lightmode.png#gh-light-mode-only">
-<img src=".github/images/logo_lightmode.png#gh-dark-mode-only">
- </div>
+
+![Logo](.github/images/logo_lightmode.png#gh-light-mode-only)
+![Logo](.github/images/logo_lightmode.png#gh-dark-mode-only)
+
 
 ## **Using this Installer:**
 #### Using the Custom ISO with included Script and Files
