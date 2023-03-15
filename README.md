@@ -21,5 +21,7 @@ ArchBSPWMInstaller is an installer to install my custom Arch Install.
  a DVD](https://wiki.archlinux.org/title/Optical_disc_drive#Burning)
 - Step 2: [Boot up Arch Linux](https://wiki.archlinux.org/title/Installation_guide#Boot_the_live_environment)
 - Step 3: [Connect to the Internet](https://wiki.archlinux.org/title/Installation_guide#Connect_to_the_internet)
-- Step 4: Change the Variables inside the script **(do not run the script before u have looked at the variables!)**
-- Step 5: ```git clone https://github.com/S22F5/ArchBSPWMInstaller.git && cd ArchBSPWMInstaller && ./v2installer.sh```
+- Step 4: ```pacman -Sy git```
+- Step 5: ```git clone https://github.com/S22F5/ArchBSPWMInstaller.git && cd ArchBSPWMInstaller && chmod +x v2installer.sh```
+- Step 6: Change the Variables inside the script **(do not run the script before u have looked at the variables!)**
+- Step 7: Run the Script ```./v2installer.sh```
