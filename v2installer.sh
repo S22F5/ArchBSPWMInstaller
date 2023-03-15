@@ -25,12 +25,10 @@ TIMEZONE='Europe/Vienna'
 #
 # Locale
 LOCALE='en_US.UTF-8'
-# UEFI
-UEFI=1
 #---------------------------------------------------------------------------#
-#check for uefi
+#check for uefi(0=bios,1=uefi)
 if [ ! -d "/sys/firmware/efi" ]; then
-	  UEFI=0
+	  UEFI=1
 fi
 #---------------------------------------------------------------------------#
 echo "  __.__                                       "
@@ -205,7 +203,7 @@ reflector --country $MIRROR_COUNTRY -l 10 --age 12 --protocol https --sort rate 
 output 11
 #12-------------------------------------------------------------------------#
 #install essential packages
-pacstrap /mnt base linux linux-firmware grub mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip compton gvfs gvfs-mtp thunar sudo bspwm sxhkd vlc alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal network-manager-applet volumeicon wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop firefox rofi wget
+pacstrap /mnt base linux linux-firmware grub mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip compton gvfs gvfs-mtp thunar sudo bspwm sxhkd vlc alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal network-manager-applet wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop icecat rofi wget
 #
 output 12
 #13-------------------------------------------------------------------------#
@@ -309,7 +307,8 @@ arch-chroot /mnt systemctl enable getty@tty1.service
 #
 output 25
 #26-------------------------------------------------------------------------#
-if [[ $UEFI -gt 1 ]]
+#check if $UEFI is bigger then 0
+if [[ $UEFI -gt 0 ]]
 then
 	#install and setup grub2 for uefi
 	arch-chroot /mnt mkdir /boot/EFI
@@ -357,7 +356,6 @@ fi
 
 pgrep -x sxhkd > /dev/null || sxhkd &
 tint2 &
-volumeicon &
 #launch session, commands below this line will be ignored
 exec bspwm
 EOF
