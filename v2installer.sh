@@ -27,8 +27,10 @@ TIMEZONE='Europe/Vienna'
 LOCALE='en_US.UTF-8'
 #---------------------------------------------------------------------------#
 #check for uefi(0=bios,1=uefi)
-if [ ! -d "/sys/firmware/efi" ]; then
-	  UEFI=1
+if [ -d "/sys/firmware/efi" ]; then
+	UEFI=1
+else
+	UEFI=0
 fi
 #---------------------------------------------------------------------------#
 echo "  __.__                                       "
