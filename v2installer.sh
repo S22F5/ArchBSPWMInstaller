@@ -244,7 +244,7 @@ output 16
 #replace locale.gen
 sed -i "s/^#\($LOCALE.*\)/\1/g" /mnt/etc/locale.gen
 #create and edit locale
-echo "$LOCALE" > /mnt/etc/locale.conf
+echo "LANG=$LOCALE" > /mnt/etc/locale.conf
 #generate locale
 arch-chroot /mnt locale-gen
 #
@@ -284,7 +284,7 @@ echo "$HOSTNAME" > /mnt/etc/hostname
 output 21
 #22-------------------------------------------------------------------------#
 ##install yay
-#arch-chroot /mnt bash -c "git clone https://aur.archlinux.org/yay-bin.git /tmp/1 && cp -arf /tmp/1/. . && makepkg -si --noconfirm"
+#arch-chroot /mnt bash -c "cd /tmp && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin/ && makepkg -sf --noconfirm && pacman -U *.tar.zst --noconfirm"
 ##
 ##output 22
 #23-------------------------------------------------------------------------#
