@@ -140,7 +140,7 @@ parted "$DRIVE" --script -- mklabel gpt
 #
 output 5
 #6--------------------------------------------------------------------------#
-if [[ $UEFI -gt 1 ]]
+if [[ $UEFI -gt 0 ]]
 then
 	#create EFI partition
 	parted "$DRIVE" --script mklabel gpt
@@ -160,7 +160,7 @@ else
 	echo "[6] Created BIOS partition"
 fi
 #7--------------------------------------------------------------------------#
-if [[ $UEFI -gt 1 ]]
+if [[ $UEFI -gt 0 ]]
 then
 	BASE=512
 else
