@@ -284,8 +284,12 @@ echo "$HOSTNAME" > /mnt/etc/hostname
 output 21
 #22-------------------------------------------------------------------------#
 ##install yay
-#arch-chroot /mnt bash -c "cd /tmp && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin/ && makepkg -sf --noconfirm && pacman -U *.tar.zst --noconfirm"
-##
+
+#arch-chroot /mnt bash -c "pacman -Sy"
+#arch-chroot /mnt su $USER_NAME -c "cd /tmp && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin/ && makepkg -sf --noconfirm"
+#arch-chroot /mnt bash -c "pacman -U /tmp/yay-bin/*.tar.zst --noconfirm"
+
+#
 ##output 22
 #23-------------------------------------------------------------------------#
 #setup xbinkeys
