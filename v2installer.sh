@@ -170,21 +170,21 @@ else
 	BASE=8
 fi
 #create swap partition
-parted "$DRIVE" --script mkpart linux-swap $BASE"MiB" $((2086+BASE))"MiB"
-parted "$DRIVE" --script name 2 swap
+#parted "$DRIVE" --script mkpart linux-swap $BASE"MiB" $((2086+BASE))"MiB"
+#parted "$DRIVE" --script name 2 swap
 #
-output 7
+#output 7
 #8--------------------------------------------------------------------------#
 #create  root partition
-parted "$DRIVE" --script mkpart primary $((2086+BASE))"MiB" 100%
-parted "$DRIVE" --script name 3 root
+parted "$DRIVE" --script mkpart primary $BASE"MiB" 100%
+parted "$DRIVE" --script name 2 root
 #
 output 8
 #---------------------------------------------------------------------------#
 #format root partition
-mkfs.ext4 "$DRIVE"3
+mkfs.ext4 "$DRIVE"2
 #format swap partition
-mkswap "$DRIVE"2
+#mkswap "$DRIVE"2
 if [[ $UEFI -gt 1 ]]
 then
 #format EFI partition
@@ -194,9 +194,9 @@ fi
 output 9
 #10-------------------------------------------------------------------------#
 #mount root partition
-mount "$DRIVE"3 /mnt
+mount "$DRIVE"2 /mnt
 #swapon swap partition
-swapon "$DRIVE"2
+#swapon "$DRIVE"2
 #
 output 10
 #11-------------------------------------------------------------------------#
@@ -299,7 +299,8 @@ arch-chroot /mnt xbindkeys --defaults > /mnt/home/$USER_NAME/.xbindkeysrc
 output 23
 #24-------------------------------------------------------------------------#
 #add wheel group to sudoers
-sed -i "s/# \(%wheel ALL=(ALL) ALL\)/\1/g" /mnt/etc/sudoers
+echo "%wheel ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
+#sed -i "s/# \(%wheel ALL=(ALL) ALL\)/\1/g" /mnt/etc/sudoers
 #
 output 24
 #25-------------------------------------------------------------------------#
@@ -995,7 +996,7 @@ chmod 600 /mnt/etc/modprobe.d/*.conf
 output 39
 #39-------------------------------------------------------------------------#
 #unmount partitions
-swapoff "$DRIVE"2
+#swapoff "$DRIVE"2
 umount "$DRIVE"1
 umount "$DRIVE"3
 #
