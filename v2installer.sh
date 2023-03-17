@@ -80,8 +80,9 @@ outmsg=(
 "[36] Setup Theme"				#36
 "[37] Set xorg keymap to $KEYMAP"		#37
 "[38] Fixed some Permissions"			#38
-"[39] Unmounted Partitions"			#39
-"[40] !DONE! thanks for using this scripty"	#40
+"[39] Blocking Webcam and Microphone"		#39	
+"[40] Unmounted Partitions"			#40
+"[41] !DONE! thanks for using this scripty"	#41
 )
 function output() {
 clear
@@ -986,14 +987,22 @@ arch-chroot /mnt chown -R $USER_NAME home/$USER_NAME/
 #
 output 38
 #39-------------------------------------------------------------------------#
+#block webcamera and microphone
+printf "install uvcvideo /bin/false" >> /mnt/etc/modprobe.d/webcam_block.conf
+printf "install snd_hda_intel /bin/false" >> /mnt/etc/modprobe.d/microphone_block.conf
+chmod 600 /mnt/etc/modprobe.d/*.conf
+#
+output 39
+#39-------------------------------------------------------------------------#
 #unmount partitions
 swapoff "$DRIVE"2
 umount "$DRIVE"1
 umount "$DRIVE"3
 #
-output 39
-##-------------------------------------------------------------------------##
 output 40
+##-------------------------------------------------------------------------##
+#
+output 41
 #reboot
 exit
 #--------------------------------------------------------------------------##
