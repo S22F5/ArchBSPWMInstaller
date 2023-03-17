@@ -1037,9 +1037,18 @@ output 40
 
 #41-------------------------------------------------------------------------#
 #copy iwd config to install
+mkdir -p /mnt/var/lib/iwd/
 cp /var/lib/iwd/*.psk /mnt/var/lib/iwd/
 #
 output 41
+#43------------------------------------------------------------------------#
+#randomize machine-id
+touch /mnt/etc/machine-id
+chown $USER_NAME /mnt/etc/machine-id
+chmod 664 /mnt/etc/machine-id
+echo "dbus-uuidgen > /etc/machine-id" >> /mnt/home/$USER_NAME/.bashrc
+#
+output 42
 #42-------------------------------------------------------------------------#
 #unmount partitions
 umount "$DRIVE"1
