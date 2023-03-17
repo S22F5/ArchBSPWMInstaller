@@ -83,8 +83,9 @@ outmsg=(
 "[39] Blocking Webcam and Microphone"		#39	
 "[40] Added Kernel Parameters"			#40
 "[41] Copied iwd config"			#41
-"[42] Unmounted Partitions"			#42
-"[43] !DONE! thanks for using this scripty"	#43
+"[42] Added machine-id randomization"		#42
+"[43] Unmounted Partitions"			#43
+"[44] !DONE! thanks for using this scripty"	#44
 )
 function output() {
 clear
@@ -1041,7 +1042,7 @@ mkdir -p /mnt/var/lib/iwd/
 cp /var/lib/iwd/*.psk /mnt/var/lib/iwd/
 #
 output 41
-#43------------------------------------------------------------------------#
+#42------------------------------------------------------------------------#
 #randomize machine-id
 touch /mnt/etc/machine-id
 chown $USER_NAME /mnt/etc/machine-id
@@ -1049,15 +1050,15 @@ chmod 664 /mnt/etc/machine-id
 echo "dbus-uuidgen > /etc/machine-id" >> /mnt/home/$USER_NAME/.bashrc
 #
 output 42
-#42-------------------------------------------------------------------------#
+#43-------------------------------------------------------------------------#
 #unmount partitions
 umount "$DRIVE"1
 umount "$DRIVE"2
 #
-output 42
+output 43
 ##--------------------------------------------------------------------------#
 #
-output 43
+output 44
 #reboot
 exit
 #--------------------------------------------------------------------------##
