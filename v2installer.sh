@@ -266,7 +266,7 @@ output 20
 #get stevenblack blocklist
 arch-chroot /mnt wget "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts" -O /etc/hosts
 #"127.0.0.1 local"      replace with    "127.0.1.1	$HOSTNAME"
-sed -i "/127.0.0.1 local/c 127.0.1.1 $HOSTNAME" /mnt/etc/hosts
+sed -i "17s/.*/127.0.1.1 $HOSTNAME/" /mnt/etc/hosts
 #enable network services
 arch-chroot /mnt systemctl enable iwd
 arch-chroot /mnt systemctl enable dhcpcd
