@@ -82,8 +82,9 @@ outmsg=(
 "[38] Fixed some Permissions"			#38
 "[39] Blocking Webcam and Microphone"		#39	
 "[40] Added Kernel Parameters"			#40
-"[41] Unmounted Partitions"			#41
-"[42] !DONE! thanks for using this scripty"	#42
+"[41] Copied iwd config"			#41
+"[42] Unmounted Partitions"			#42
+"[43] !DONE! thanks for using this scripty"	#43
 )
 function output() {
 clear
@@ -1035,14 +1036,19 @@ EOF
 output 40
 
 #41-------------------------------------------------------------------------#
+#copy iwd config to install
+cp /var/lib/iwd/*.psk /mnt/var/lib/iwd/
+#
+output 41
+#42-------------------------------------------------------------------------#
 #unmount partitions
 umount "$DRIVE"1
 umount "$DRIVE"2
 #
-output 41
-##-------------------------------------------------------------------------##
-#
 output 42
+##--------------------------------------------------------------------------#
+#
+output 43
 #reboot
 exit
 #--------------------------------------------------------------------------##
