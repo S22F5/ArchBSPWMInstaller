@@ -986,7 +986,7 @@ output 39
 #40------------------------------------------------------------------------#
 cat >> /mnt/etc/sysctl.d/security.conf << EOF
 net.ipv4.ip_default_ttl=128
-net.ipv4.icmp_echo_ignore_all = 1
+net.ipv4.icmp_echo_ignore_all=1
 kernel.kptr_restrict=1
 kernel.dmesg_restrict=1
 kernel.printk=3 3 3 3
@@ -1025,8 +1025,8 @@ kernel.core_pattern=|/bin/false
 fs.suid_dumpable=0
 vm.swappiness=1
 random.trust_cpu=off
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.all.disable_ipv6=1
+net.ipv6.conf.default.disable_ipv6=1
 ipv6.disable=1
 EOF
 #
