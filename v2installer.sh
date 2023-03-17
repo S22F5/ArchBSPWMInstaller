@@ -998,7 +998,7 @@ output 39
 #unmount partitions
 #swapoff "$DRIVE"2
 umount "$DRIVE"1
-umount "$DRIVE"3
+umount "$DRIVE"2
 #
 output 40
 ##-------------------------------------------------------------------------##
