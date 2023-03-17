@@ -264,7 +264,7 @@ output 20
 #21-------------------------------------------------------------------------#
 #create and edit hosts file
 #get stevenblack blocklist
-wget "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts" -O /mnt/etc/hosts
+arch-chroot /mnt wget "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts" -O /etc/hosts
 #"127.0.0.1 local"      replace with    "127.0.1.1	$HOSTNAME"
 sed -i "/127.0.0.1 local/c 127.0.1.1 $HOSTNAME" /mnt/etc/hosts
 #enable network services
