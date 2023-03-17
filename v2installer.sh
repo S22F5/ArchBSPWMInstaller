@@ -267,6 +267,10 @@ output 20
 arch-chroot /mnt wget "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts" -O /etc/hosts
 #"127.0.0.1 local"      replace with    "127.0.1.1	$HOSTNAME"
 sed -i "17s/.*/127.0.1.1 $HOSTNAME/" /mnt/etc/hosts
+#block abc agencies
+while IFS= read -r ip ; do
+  arch-chroot /mnt iptables -A INPUT -s "$ip" -j DROP
+done < glowblock.txt
 #enable network services
 arch-chroot /mnt systemctl enable iwd
 arch-chroot /mnt systemctl enable dhcpcd
