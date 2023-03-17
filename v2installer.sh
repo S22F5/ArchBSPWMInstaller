@@ -1045,9 +1045,9 @@ output 41
 #42------------------------------------------------------------------------#
 #randomize machine-id
 touch /mnt/etc/machine-id
-chown $USER_NAME /mnt/etc/machine-id
+arch-chroot /mnt chown "$USER_NAME" /etc/machine-id
 chmod 664 /mnt/etc/machine-id
-echo "dbus-uuidgen > /etc/machine-id" >> /mnt/home/$USER_NAME/.bashrc
+echo "dbus-uuidgen > /etc/machine-id" >> /mnt/home/"$USER_NAME"/.bashrc
 #
 output 42
 #43-------------------------------------------------------------------------#
