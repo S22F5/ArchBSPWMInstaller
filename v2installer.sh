@@ -42,50 +42,49 @@ echo "  Will Install my Personal BSPWM/Tint2 System "
 sleep 1
 #---------------------------------------------------------------------------#
 outmsg=(
-"[1] Checking Connection"			#01
-"[2] Set Keymap to $KEYMAP"	 		#02
-"[3] Set NTP-time"				#03
-"[4] Cleared SDD Memory Cells"			#04
-"[5] Nulled $DRIVE"				#05
-"[6] Created EFI partition"			#06
-"[7] Created SWAP partition"			#07
-"[8] Created ROOT partition"			#08
-"[9] Formated partitions"			#09
-"[10] Mounted and Swaped partitions"		#10
-"[11] Got Fasted $MIRROR_COUNTRY Mirror"	#11
-"[12] Installed Essential Packages"		#12
-"[13] Created fstab"				#13
-"[14] Setup System in Chroot"			#14
-"[15] Set ROOT Passsword"			#15
-"[16] Created and Setup $USER_NAME"		#16
-"[17] Set Locale to $LOCALE"			#17
-"[18] Set Permanent Keymap to $KEYMAP"		#18
-"[19] Created Initcpio"				#19
-"[20] Enabled Multilib"				#20
-"[21] Setup Networking"				#21
-"[22] Installed yay"				#22
-"[23] Setup Xbinkeys"				#23
-"[24] Setup Sudo for User"			#24
-"[25] Enabled Autologin for $USER_NAME"		#25
-"[26] Installed GRUB"				#26
-"[27] Copied bash-profile"			#27
-"[28] Copied xinitrc"				#28
-"[29] Copied bspwmrc"				#29
-"[30] Copied Background Image"			#30
-"[31] Copied xprofile"				#31
-"[32] Copied tint2rc"				#32
-"[33] Copied sxhkdrc"				#33
-"[34] Setup jgmenu"				#34
-"[35] Setup gsimplecal"				#35
-"[36] Setup Theme"				#36
-"[37] Set xorg keymap to $KEYMAP"		#37
-"[38] Fixed some Permissions"			#38
-"[39] Blocking Webcam and Microphone"		#39	
-"[40] Added Kernel Parameters"			#40
-"[41] Copied iwd config"			#41
-"[42] Added machine-id randomization"		#42
-"[43] Unmounted Partitions"			#43
-"[44] !DONE! thanks for using this scripty"	#44
+"[01] Checking Connection"			#01
+"[02] Set Keymap to $KEYMAP"	 		#02
+"[03] Set NTP-time"				#03
+"[04] Found Disk"				#04
+"[05] Nulled $DRIVE"				#05
+"[06] Created EFI partition"			#06
+"//[07] Unused//"				#07
+"[08] Created ROOT partition"			#08
+"[09] Formated partitions"			#09
+"[10] Got Fasted $MIRROR_COUNTRY Mirror"	#10
+"[11] Installed Essential Packages"		#11
+"[12] Created fstab"				#12
+"[13] Setup System in Chroot"			#13
+"[14] Installed yay and set ROOT Passsword"	#14
+"[15] Created and Setup $USER_NAME"		#15
+"[16] Set Locale to $LOCALE"			#16
+"[17] Set Permanent Keymap to $KEYMAP"		#17
+"[18] Created Initcpio"				#18
+"[19] Enabled Multilib"				#19
+"[20] Setup Networking"				#20
+"[21] Installed yay"				#21
+"[22] Setup Xbinkeys"				#22
+"[23] Setup Sudo for User"			#23
+"[24] Enabled Autologin for $USER_NAME"		#24
+"[25] Installed GRUB"				#25
+"[26] Copied bash-profile"			#26
+"[27] Copied xinitrc"				#27
+"[28] Copied bspwmrc"				#28
+"[29] Copied Background Image"			#29
+"[30] Copied xprofile"				#30
+"[31] Copied tint2rc"				#31
+"[32] Copied sxhkdrc"				#32
+"[33] Setup jgmenu"				#33
+"[34] Setup gsimplecal"				#34
+"[35] Setup Theme"				#35
+"[36] Set xorg keymap to $KEYMAP"		#36
+"[37] Fixed some Permissions"			#37
+"[38] Blocking Webcam and Microphone"		#38	
+"[39] Added Kernel Parameters"			#39
+"[40] Copied iwd config"			#40
+"[41] Added machine-id randomization"		#41
+"[42] Unmounted Partitions"			#42
+"[43] !DONE! thanks for using this scripty"	#43
 )
 function output() {
 clear
@@ -219,13 +218,15 @@ output 14
 #15-------------------------------------------------------------------------#
 #add main user
 arch-chroot /mnt useradd -m -G users,video,log,rfkill,wheel,tty -s /bin/bash $USER_NAME
+# create home directory structures
+arch-chroot /mnt xdg-user-dirs-update
+#install yay
+printf "cd /home/$USER_NAME && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm" | arch-chroot /mnt /bin/bash -c "su $USER_NAME"
 #set main user password
 arch-chroot /mnt passwd $USER_NAME << EOD
 $USER_PASSWORD
 $USER_PASSWORD
 EOD
-# create home directory structures
-arch-chroot /mnt xdg-user-dirs-update
 #
 output 15
 #16-------------------------------------------------------------------------#
