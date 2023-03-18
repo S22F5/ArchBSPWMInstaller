@@ -221,7 +221,7 @@ arch-chroot /mnt useradd -m -G users,video,log,rfkill,wheel,tty -s /bin/bash $US
 # create home directory structures
 arch-chroot /mnt xdg-user-dirs-update
 #remove password for install
-arch-chroot $USER_NAME -d
+arch-chroot passwd $USER_NAME -d
 #add wheel group to sudoers
 echo "%wheel ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 #install yay
