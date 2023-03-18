@@ -19,6 +19,13 @@ TIMEZONE='Europe/Vienna'
 # Locale
 LOCALE='en_US.UTF-8'
 ###------------------------output_function-----------------------###
+echo "  __.__                                       "
+echo "  | * |        ArchBSPWMInstaller         ___ "
+echo " _|___|_            by s22f5             _|_|_"
+echo " (*~ ~*)                                 (*~*)"
+echo "  Made for: | Intel CPU | AMD GPU | SDD Drive "
+echo "  Will Install my Personal BSPWM/Tint2 System "
+sleep 1
 #output function
 outmsg=(
 "[01] UEFI="$UEFI""
