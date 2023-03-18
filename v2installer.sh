@@ -1,150 +1,107 @@
 #!/bin/bash
+###---------------------------variables--------------------------###
 # Install Drive (!!!will be wiped!!!)
 DRIVE='/dev/sda'
-#
 # Hostname
 HOSTNAME='hostname'
-#
 # Root User Password.
 ROOT_PASSWORD='root'
-#
 # Main User
 USER_NAME='user'
-#
 # Main User Password
 USER_PASSWORD='pass'
-#
 # Keymap
 KEYMAP='us'
-#
 # Mirror Country
 MIRROR_COUNTRY='Germany'
-#
 # Timezone in "Zone/City" Format
 TIMEZONE='Europe/Vienna'
-#
 # Locale
 LOCALE='en_US.UTF-8'
-#---------------------------------------------------------------------------#
+###------------------------output_function-----------------------###
+#output function
+outmsg=(
+"[01] UEFI="$UEFI""
+"[02] set time to using ntp"
+"[03] erased $DRIVE"
+"[04] created partition "$DRIVE"1"
+"[05]created partition "$DRIVE"2"
+"[06]formated partitions"
+"[07]mounted "$DRIVE" to /mnt"
+"[08]got fastest mirror in "$MIRROR_COUNTRY" using reflector"
+"[09]installed essential packages"
+"[10]generated fstab"
+"[11]copied some configs"
+"[12]set root password"
+"[13]added "$USER_NAME""
+"[14]generated xdg user directory structure"
+"[15]installed yay"
+"[16]set "$USER_NAME" password"
+"[17]added chaotic repository"
+"[18]set timezone to "$TIMEZONE""
+"[19]set time using bios clock"
+"[20]generated "$LOCALE" locale"
+"[21]set installation keymap to "$KEYMAP""
+"[22]created initcpio"
+"[23]enabled multilib mirrors"
+"[24]setup networking"
+"[25]setup xbinkeys"
+"[26]enabled autologin"
+"[27]configured grub"
+"[28]setup bash_profile"
+"[29]setup xinitrc"
+"[30]setup bspwmrc"
+"[31]setup background"
+"[32]setup xprofile"
+"[33]setup tint2rc"
+"[34]setup sxhkd"
+"[35]setup jgmenu"
+"[36]fixed gsimplecal"
+"[37]setup themes"
+"[38]fixed some permissions"
+"[39]blocked webcam and microphone modules"
+"[40]added kernel parameters"
+"[41]enabled machine-id randomization"
+"[42]unmounted partitions"
+"[43]DONE! thanks for using this script"
+)
+function output() {
+clear
+printf '%s\n' "${outmsg[@]:0:$1}"
+}
+###-------------------------sanity_checks------------------------###
+#check internet connection
+if ! ping 8.8.8.8 -c 1 >/dev/null 2>&1;
+then
+    echo "[E] Network Error"
+    exit
+fi
+#check if the drive exists
+if [ ! -e "$DRIVE" ]
+then
+	echo "[E] Drive ""$DRIVE"" does not exist!"
+	exit
+fi
+#--------------------------------01--------------------------------#
 #check for uefi(0=bios,1=uefi)
 if [ -d "/sys/firmware/efi" ]; then
 	UEFI=1
 else
 	UEFI=0
 fi
-#---------------------------------------------------------------------------#
-echo "  __.__                                       "
-echo "  | * |        ArchBSPWMInstaller         ___ "
-echo " _|___|_              by                 _|_|_"
-echo " (*~ ~*)          s22f5&Jears            (*~*)"
-echo "  Made for: | Intel CPU | AMD GPU | SDD Drive "
-echo "  Will Install my Personal BSPWM/Tint2 System "
-sleep 1
-#---------------------------------------------------------------------------#
-outmsg=(
-"[01] Checking Connection"			#01
-"[02] Set Keymap to $KEYMAP"	 		#02
-"[03] Set NTP-time"				#03
-"[04] Found Disk"				#04
-"[05] Nulled $DRIVE"				#05
-"[06] Created EFI partition"			#06
-"//[07] Unused//"				#07
-"[08] Created ROOT partition"			#08
-"[09] Formated partitions"			#09
-"[10] Got Fasted $MIRROR_COUNTRY Mirror"	#10
-"[11] Installed Essential Packages"		#11
-"[12] Created fstab"				#12
-"[13] Setup System in Chroot"			#13
-"[14] Installed yay and set ROOT Passsword"	#14
-"[15] Created and Setup $USER_NAME"		#15
-"[16] Set Locale to $LOCALE"			#16
-"[17] Set Permanent Keymap to $KEYMAP"		#17
-"[18] Created Initcpio"				#18
-"[19] Enabled Multilib"				#19
-"[20] Setup Networking"				#20
-"[21] Installed yay"				#21
-"[22] Setup Xbinkeys"				#22
-"[23] Setup Sudo for User"			#23
-"[24] Enabled Autologin for $USER_NAME"		#24
-"[25] Installed GRUB"				#25
-"[26] Copied bash-profile"			#26
-"[27] Copied xinitrc"				#27
-"[28] Copied bspwmrc"				#28
-"[29] Copied Background Image"			#29
-"[30] Copied xprofile"				#30
-"[31] Copied tint2rc"				#31
-"[32] Copied sxhkdrc"				#32
-"[33] Setup jgmenu"				#33
-"[34] Setup gsimplecal"				#34
-"[35] Setup Theme"				#35
-"[36] Set xorg keymap to $KEYMAP"		#36
-"[37] Fixed some Permissions"			#37
-"[38] Blocking Webcam and Microphone"		#38	
-"[39] Added Kernel Parameters"			#39
-"[40] Copied iwd config"			#40
-"[41] Added machine-id randomization"		#41
-"[42] Unmounted Partitions"			#42
-"[43] !DONE! thanks for using this scripty"	#43
-)
-function output() {
-clear
-printf '%s\n' "${outmsg[@]:0:$1}"
-}
-function YNDiag() {
-	while : ; do
-		echo "[y/n]"
-		read -r response
-		case $response in
-			[Yy]* ) return 0 ;;
-			[Nn]* ) return 1 ;;
-			*) echo invalid response! ;;
-		esac
-	done
-}
-#Start Install                                                              #
-#1--------------------------------------------------------------------------#
-#check connection
-output 1
-#
 
-if ! ping 8.8.8.8 -c 1 >/dev/null 2>&1;
-then
-    clear
-    echo "[E]!Network Error!"
-    echo "You might not be connected to the internet."
-    echo "Contine anyway?"
-	YNDiag
-	if [ $? == 1 ] ; then
-		exit
-	fi
-fi
-#
-#2--------------------------------------------------------------------------#
-#set live-usb
-loadkeys $KEYMAP
-#
-output 2
-#3--------------------------------------------------------------------------#
-#set time to ntp
+output 1 #UEFI=$UEFI
+#--------------------------------02--------------------------------#
+#set time to using ntp
 timedatectl set-ntp true
-#
-output 3
-#4--------------------------------------------------------------------------#
-#Check if disk exists
-if [ ! -e "$DRIVE" ]
-then
-	echo "[E] Drive ""$DRIVE"" does not exist!"
-	exit
-fi
-#
-output 4
-#5--------------------------------------------------------------------------#
-#erase disk
+
+output 2 #set time to using ntp
+#--------------------------------03--------------------------------#
 dd if=/dev/zero of="$DRIVE" bs=100M count=10 status=progress
 parted "$DRIVE" --script -- mklabel gpt
-#
-output 5
-#6--------------------------------------------------------------------------#
+
+output 3 #erased $DRIVE
+#--------------------------------04--------------------------------#
 if [[ $UEFI -gt 0 ]]
 then
 	#create EFI partition
@@ -164,126 +121,126 @@ else
 	output 5
 	echo "[6] Created BIOS partition"
 fi
-#8--------------------------------------------------------------------------#
+
+output 4 #created "$DRIVE"1
+#--------------------------------05--------------------------------#
 if [[ $UEFI -gt 0 ]]
 then
 	BASE=512
 else
 	BASE=8
 fi
-
 #create  root partition
 parted "$DRIVE" --script mkpart primary $BASE"MiB" 100%
 parted "$DRIVE" --script name 2 root
-#
-output 8
-#9--------------------------------------------------------------------------#
-#format root partition
+
+output 5 #created "$DRIVE"2
+#--------------------------------06--------------------------------#
 mkfs.ext4 "$DRIVE"2
 if [[ $UEFI -gt 1 ]]
 then
 #format EFI partition
 mkfs.fat -F 32 "$DRIVE"1
 fi
-#
-output 9
-#10-------------------------------------------------------------------------#
-#mount root partition
+
+output 6 #formated partitions
+#--------------------------------07--------------------------------#
 mount "$DRIVE"2 /mnt
-#
-output 10
-#11-------------------------------------------------------------------------#
-#get fastest mirrorlist
+
+output 7 #mounted "$DRIVE" to /mnt
+#--------------------------------08--------------------------------#
 reflector --country $MIRROR_COUNTRY -l 10 --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
-#
-output 11
-#12-------------------------------------------------------------------------#
-#install essential packages
+
+output 8 #got fastest mirror in "$MIRROR_COUNTRY" using reflector
+#--------------------------------09--------------------------------#
 pacstrap /mnt base linux-hardened linux-firmware grub mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip picom gvfs gvfs-mtp thunar sudo bspwm sxhkd vlc alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal network-manager-applet wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop rofi wget intel-ucode torsocks
-#
-output 12
-#13-------------------------------------------------------------------------#
-#setup fstab
+
+output 9 #installed essential packages
+#--------------------------------10--------------------------------#
 genfstab -U /mnt >> /mnt/etc/fstab
-#
-output 13
-#14-------------------------------------------------------------------------#
-#set root password
+
+output 10 #generated fstab
+#--------------------------------11--------------------------------#
+cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
+mkdir -p /mnt/var/lib/iwd/
+cp /var/lib/iwd/*.psk /mnt/var/lib/iwd/
+
+output 11 #copied some configs
+#--------------------------------12--------------------------------#
 arch-chroot /mnt passwd << EOD
 $ROOT_PASSWORD
 $ROOT_PASSWORD
 EOD
-#
-output 14
-#15-------------------------------------------------------------------------#
-#add main user
+
+output 12 #set root password
+#--------------------------------13--------------------------------#
 arch-chroot /mnt useradd -m -G users,video,log,rfkill,wheel,tty -s /bin/bash $USER_NAME
-# create home directory structures
+
+output 13 #added "$USER_NAME"
+#--------------------------------14--------------------------------#
 arch-chroot /mnt xdg-user-dirs-update
-#remove password for install
+
+output 14 #generated xdg user directory structure
+#--------------------------------15--------------------------------#
 arch-chroot /mnt passwd $USER_NAME -d
-#add wheel group to sudoers
 echo "%wheel ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
-#install yay
 printf "cd /home/$USER_NAME && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm" | arch-chroot /mnt /bin/bash -c "su $USER_NAME"
-#set main user password
+
+output 15 #installed yay
+#--------------------------------16--------------------------------#
 arch-chroot /mnt passwd $USER_NAME << EOD
 $USER_PASSWORD
 $USER_PASSWORD
 EOD
-#
-output 15
-#temporary before cleanup--------------------------------------------------#
-#add chaotic repo
+
+output 16 #set "$USER_NAME" password
+#--------------------------------17--------------------------------#
 arch-chroot /mnt pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
 arch-chroot /mnt pacman-key --lsign-key FBA220DFC880C036
 arch-chroot /mnt pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm
 echo "[chaotic-aur]" >> /mnt/etc/pacman.conf
 echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /mnt/etc/pacman.conf
-#
-#install yay packages
-arch-chroot /mnt pacman -Sy
-arch-chroot /mnt yay -S chaotic-aur/icecat community/bucklespring aur/kloak-git --noconfirm
-#16-------------------------------------------------------------------------#
-#setting timezone
+
+output 17 #added chaotic repository
+#--------------------------------18--------------------------------#
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-#setting time to bios hwclock
+
+output 18 #set timezone to "$TIMEZONE"
+#--------------------------------19--------------------------------#
 arch-chroot /mnt hwclock --systohc
-#
-output 16
-#17-------------------------------------------------------------------------#
-#replace locale.gen
+
+output 19 #set time using bios clock
+#--------------------------------20--------------------------------#
 sed -i "s/^#\($LOCALE.*\)/\1/g" /mnt/etc/locale.gen
-#create and edit locale
 echo "LANG=$LOCALE" > /mnt/etc/locale.conf
-#generate locale
 arch-chroot /mnt locale-gen
-#
-output 17
-#18-------------------------------------------------------------------------#
-#set permanent keymap
+
+output 20 #generated "$LOCALE" locale
+#--------------------------------21--------------------------------#
 touch /mnt/etc/vconsole.conf
 echo "KEYMAP=$KEYMAP" > /mnt/etc/vconsole.conf
-#
-output 18
-#19-------------------------------------------------------------------------#
-#create initcpio
+cat >> /mnt/etc/X11/xorg.conf.d/00-keyboard.conf << EOF
+Section "InputClass"
+    Identifier 		"system-keyboard"
+    MatchIsKeyboard	"on"
+    Option		"XkbLayout" "$KEYMAP"
+EndSection
+EOF
+arch-chroot /mnt localectl set-x11-keymap "$KEYMAP"
+
+output 21 #set installation keymap to "$KEYMAP"
+#--------------------------------22--------------------------------#
 arch-chroot /mnt mkinitcpio -P
-#
-output 19
-#20-------------------------------------------------------------------------#
-#Enable mutlilib mirror
+
+output 22 #created initcpio
+#--------------------------------23--------------------------------#
 echo "[multilib]" >> /mnt/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
-#
-output 20
-#21-------------------------------------------------------------------------#
-#create and edit hosts file
-#get stevenblack blocklist
+
+output 23 #enabled multilib mirrors
+#--------------------------------24--------------------------------#
 arch-chroot /mnt wget "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts" -O /etc/hosts
-#"127.0.0.1 local"      replace with    "127.0.1.1	$HOSTNAME"
 sed -i "17s/.*/127.0.1.1 $HOSTNAME/" /mnt/etc/hosts
-#block abc agencies
 while IFS= read -r ip ; do
   arch-chroot /mnt iptables -A INPUT -s "$ip" -j DROP
 done < glowblock.txt
@@ -294,27 +251,13 @@ arch-chroot /mnt systemctl enable systemd-networkd
 #set system hostname
 touch /mnt/etc/hostname
 echo "$HOSTNAME" > /mnt/etc/hostname
-#
-output 21
-#22-------------------------------------------------------------------------#
-##install yay
 
-#arch-chroot /mnt bash -c "pacman -Sy"
-#arch-chroot /mnt su $USER_NAME -c "cd /tmp && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin/ && makepkg -sf --noconfirm"
-#arch-chroot /mnt bash -c "pacman -U /tmp/yay-bin/*.tar.zst --noconfirm"
-
-#
-##output 22
-#23-------------------------------------------------------------------------#
-#setup xbinkeys
+output 24 #setup networking
+#--------------------------------25--------------------------------#
 arch-chroot /mnt xbindkeys --defaults > /mnt/home/$USER_NAME/.xbindkeysrc
-#
-output 23
-#24-------------------------------------------------------------------------#
-#
-output 24
-#25-------------------------------------------------------------------------#
-#enable autologin 
+
+output 25 #setup xbinkeys
+#--------------------------------26--------------------------------#
 arch-chroot /mnt mkdir -p /etc/systemd/system/getty@tty1.service.d/
 cat > /mnt/etc/systemd/system/getty@tty1.service.d/autologin.conf <<EOF
 [Service]
@@ -322,10 +265,9 @@ ExecStart=
 ExecStart=-/sbin/agetty --autologin $USER_NAME --noclear %I 38400 linux
 EOF
 arch-chroot /mnt systemctl enable getty@tty1.service
-#
-output 25
-#26-------------------------------------------------------------------------#
-#check if $UEFI is bigger then 0
+
+output 26 #enabled autologin
+#--------------------------------27--------------------------------#
 if [[ $UEFI -gt 0 ]]
 then
 	#install and setup grub2 for uefi
@@ -340,10 +282,9 @@ else
 	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic lockdown=confidentiality quiet loglevel=0"' /mnt/etc/default/grub
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 fi
-#
-output 26
-#27-------------------------------------------------------------------------#
-#copy bash_profile
+
+output 27 #configured grub
+#--------------------------------28--------------------------------#
 rm /mnt/home/$USER_NAME/.bash_profile
 cat >> "/mnt/home/$USER_NAME/.bash_profile" <<\EOF
 #add  ~/.local/bin to PATH
@@ -352,10 +293,9 @@ echo $PATH | grep -q "$HOME/.local/bin:" || export PATH="$HOME/.local/bin:$PATH"
 #automatically run startx when logging in on tty1
 [ -z "$DISPLAY" ] && [ $XDG_VTNR -eq 1 ] && startx
 EOF
-#
-output 27
-#28-------------------------------------------------------------------------#
-#setup startx
+
+output 28 #setup bash_profile
+#--------------------------------29--------------------------------#
 cat >> "/mnt/home/$USER_NAME/.xinitrc" <<\EOF
 #!/bin/sh
 
@@ -379,10 +319,9 @@ tint2 &
 #launch session, commands below this line will be ignored
 exec bspwm
 EOF
-#
-output 28
-#29-------------------------------------------------------------------------#
-#setup bspwm config
+
+output 29 #setup xinitrc
+#--------------------------------30--------------------------------#
 mkdir -p /mnt/home/$USER_NAME/.config/bspwm/
 cat >> /mnt/home/$USER_NAME/.config/bspwm/bspwmrc << EOF
 #!/bin/sh
@@ -406,16 +345,14 @@ bspc config pointer_action2 resize_side
 bspc config pointer_action3 resize_corner
 
 EOF
-#
-output 29
-#30-------------------------------------------------------------------------#
-#copy bg
+
+output 30 #setup bspwmrc
+#--------------------------------31--------------------------------#
 mkdir -p /mnt/home/$USER_NAME/Pictures
 cp bg.png /mnt/home/$USER_NAME/Pictures/
-#
-output 30
-#31-------------------------------------------------------------------------#
-#.xprofile
+
+output 31 #setup background
+#--------------------------------32--------------------------------#
 cat >> /mnt/home/$USER_NAME/.xprofile <<\EOF
 #!/bin/sh
 
@@ -424,14 +361,11 @@ cat >> /mnt/home/$USER_NAME/.xprofile <<\EOF
 export XDG_CONFIG_HOME="$HOME/.config"
 export PATH="$HOME/.local/bin:$PATH"
 
-
+feh --bg-fill /home/$USER_NAME/Pictures/bg.png
 EOF
-#add feh to .xprofile
-echo "feh --bg-fill /home/$USER_NAME/Pictures/bg.png" >> /mnt/home/$USER_NAME/.xprofile
-#
-output 31
-#31-------------------------------------------------------------------------#
-#setup tint2rc
+
+output 32 #setup xprofile
+#--------------------------------33--------------------------------#
 mkdir -p /mnt/home/$USER_NAME/.config/tint2
 cat >> /mnt/home/$USER_NAME/.config/tint2/tint2rc <<\EOF
 #-------------------------------------
@@ -648,9 +582,9 @@ tooltip_background_id = 6
 tooltip_font_color = #d8d8d8 100
 tooltip_font = sans 10
 EOF
-#
-output 32
-#33-------------------------------------------------------------------------#
+
+output 33 #setup tint2rc
+#--------------------------------34--------------------------------#
 #setup sxhkd
 mkdir -p /mnt/home/$USER_NAME/.config/sxhkd
 cat >> /mnt/home/$USER_NAME/.config/sxhkd/sxhkdrc <<\EOF
@@ -799,10 +733,9 @@ XF86MonBrightnessDown
 super + d
 	rofi -show window
 EOF
-#
-output 33
-#34-------------------------------------------------------------------------#
-#jgmenu
+
+output 34 #setup sxhkd
+#--------------------------------35--------------------------------#
 mkdir -p /mnt/home/$USER_NAME/.config/jgmenu
 cat >> /mnt/home/$USER_NAME/.config/jgmenu/append.csv <<\EOF
 ^sep()
@@ -885,10 +818,9 @@ color_sep_fg         = #919BA0 40
 
 #csv_name_format     = %n (%g)
 EOF
-#
-output 34
-#35-------------------------------------------------------------------------#
-#fix gsimplecal
+
+output 35 #setup jgmenu
+#--------------------------------36--------------------------------#
 mkdir -p /mnt/home/$USER_NAME/.config/gsimplecal/
 cat >> /mnt/home/$USER_NAME/.config/gsimplecal/config << EOF
 show_timezones = 1
@@ -906,10 +838,9 @@ mainwindow_yoffset = 30
 mainwindow_xoffset = 0
 clock_format = %a %d %b %H:%M
 EOF
-#
-output 35
-#36-------------------------------------------------------------------------#
-#setup themes
+
+output 36 #fixed gsimplecal
+#--------------------------------37--------------------------------#
 cp -r themes/ArchLabs-Dark/ /mnt/usr/share/themes
 cp -r icons/ArchLabs-Dark/ /mnt/usr/share/icons
 mkdir -p "/mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/"
@@ -978,33 +909,19 @@ gtk-xft-antialias=1
 gtk-xft-hinting=1
 gtk-xft-hintstyle=hintfull
 EOF
-#
-output 36
-#37-------------------------------------------------------------------------#
-#set xorg keymap
-cat >> /mnt/etc/X11/xorg.conf.d/00-keyboard.conf << EOF
-Section "InputClass"
-    Identifier 		"system-keyboard"
-    MatchIsKeyboard	"on"
-    Option		"XkbLayout" "$KEYMAP"
-EndSection
-EOF
-arch-chroot /mnt localectl set-x11-keymap "$KEYMAP"
-#
-output 37
-#38-------------------------------------------------------------------------#
-#set owner
+
+output 37 #setup themes
+#--------------------------------38--------------------------------#
 arch-chroot /mnt chown -R $USER_NAME home/$USER_NAME/
-#
-output 38
-#39-------------------------------------------------------------------------#
-#block webcamera and microphone
+
+output 38 #fixed some permissions
+#--------------------------------39--------------------------------#
 printf "install uvcvideo /bin/false" >> /mnt/etc/modprobe.d/webcam_block.conf
 printf "install snd_hda_intel /bin/false" >> /mnt/etc/modprobe.d/microphone_block.conf
 chmod 600 /mnt/etc/modprobe.d/*.conf
-#
-output 39
-#40------------------------------------------------------------------------#
+
+output 39 #blocked webcam and microphone modules
+#--------------------------------40--------------------------------#
 cat >> /mnt/etc/sysctl.d/security.conf << EOF
 net.ipv4.ip_default_ttl=128
 net.ipv4.icmp_echo_ignore_all=1
@@ -1050,32 +967,19 @@ net.ipv6.conf.all.disable_ipv6=1
 net.ipv6.conf.default.disable_ipv6=1
 ipv6.disable=1
 EOF
-#
-output 40
 
-#41-------------------------------------------------------------------------#
-#copy iwd config to install
-mkdir -p /mnt/var/lib/iwd/
-cp /var/lib/iwd/*.psk /mnt/var/lib/iwd/
-#
-output 41
-#42------------------------------------------------------------------------#
-#randomize machine-id
+output 40 #added kernel parameters
+#--------------------------------41--------------------------------#
 touch /mnt/etc/machine-id
 arch-chroot /mnt chown "$USER_NAME" /etc/machine-id
 chmod 664 /mnt/etc/machine-id
 echo "dbus-uuidgen > /etc/machine-id" >> /mnt/home/"$USER_NAME"/.bashrc
-#
-output 42
-#43-------------------------------------------------------------------------#
-#unmount partitions
+
+output 41 #enabled machine-id randomization
+#--------------------------------42--------------------------------#
 umount "$DRIVE"1
 umount "$DRIVE"2
-#
-output 43
-##--------------------------------------------------------------------------#
-#
-output 44
-#reboot
+output 42 #unmounted partitions
+###--------------------------------------------------------------###
+output 43 #DONE! thanks for using this script
 exit
-#--------------------------------------------------------------------------##
