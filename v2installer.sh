@@ -233,6 +233,17 @@ $USER_PASSWORD
 EOD
 #
 output 15
+#temporary before cleanup--------------------------------------------------#
+#add chaotic repo
+arch-chroot /mnt pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
+arch-chroot /mnt pacman-key --lsign-key FBA220DFC880C036
+arch-chroot /mnt pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm
+echo "[chaotic-aur]" >> /mnt/etc/pacman.conf
+echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /mnt/etc/pacman.conf
+#
+#install yay packages
+arch-chroot /mnt pacman -Sy
+arch-chroot /mnt yay -S chaotic-aur/icecat community/bucklespring aur/kloak-git --noconfirm
 #16-------------------------------------------------------------------------#
 #setting timezone
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
