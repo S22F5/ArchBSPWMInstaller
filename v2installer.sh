@@ -220,6 +220,10 @@ output 14
 arch-chroot /mnt useradd -m -G users,video,log,rfkill,wheel,tty -s /bin/bash $USER_NAME
 # create home directory structures
 arch-chroot /mnt xdg-user-dirs-update
+#remove password for install
+arch-chroot $USER_NAME -d
+#add wheel group to sudoers
+echo "%wheel ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 #install yay
 printf "cd /home/$USER_NAME && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm" | arch-chroot /mnt /bin/bash -c "su $USER_NAME"
 #set main user password
@@ -296,8 +300,6 @@ arch-chroot /mnt xbindkeys --defaults > /mnt/home/$USER_NAME/.xbindkeysrc
 #
 output 23
 #24-------------------------------------------------------------------------#
-#add wheel group to sudoers
-echo "%wheel ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 #
 output 24
 #25-------------------------------------------------------------------------#
