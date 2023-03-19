@@ -992,24 +992,24 @@ arch-chroot /mnt yes|pacman -Scc
 
 output 42 #installed extra packages
 #--------------------------------43--------------------------------#
-cat >> /mnt/etc/systemd/system/macspoof@.service << EOF
-[Unit]
-Description=macchanger on %I
-Wants=network-pre.target
-Before=network-pre.target
-BindsTo=sys-subsystem-net-devices-%i.device
-After=sys-subsystem-net-devices-%i.device
-
-[Service]
-ExecStart=/usr/bin/macchanger -r %I
-Type=oneshot
-
-[Install]
-WantedBy=multi-user.target
-EOF
-arch-chroot /mnt systemctl enable macspoof@"$INTERFACE".service
-
-output 43 #setup macchanger
+#cat >> /mnt/etc/systemd/system/macspoof@.service << EOF
+#[Unit]
+#Description=macchanger on %I
+#Wants=network-pre.target
+#Before=network-pre.target
+#BindsTo=sys-subsystem-net-devices-%i.device
+#After=sys-subsystem-net-devices-%i.device
+#
+#[Service]
+#ExecStart=/usr/bin/macchanger -r %I
+#Type=oneshot
+#
+#[Install]
+#WantedBy=multi-user.target
+#EOF
+#arch-chroot /mnt systemctl enable macspoof@"$INTERFACE".service
+#
+#output 43 #setup macchanger
 #--------------------------------44--------------------------------#
 umount "$DRIVE"1
 umount "$DRIVE"2
