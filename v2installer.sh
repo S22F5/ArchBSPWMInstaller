@@ -92,7 +92,7 @@ then
 	exit
 fi
 #get network interface name
-INTERFACE=(ip route get 1.1.1.1 | awk '{print $3}')
+INTERFACE=$(ip route get 1.1.1.1 | awk '{print $3}')
 #--------------------------------01--------------------------------#
 #check for uefi(0=bios,1=uefi)
 if [ -d "/sys/firmware/efi" ]; then
