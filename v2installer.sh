@@ -992,7 +992,7 @@ arch-chroot /mnt yes|pacman -Scc
 
 output 42 #installed extra packages
 #--------------------------------43--------------------------------#
-cat >> /etc/systemd/system/macspoof@.service << EOF
+cat >> /mnt/etc/systemd/system/macspoof@.service << EOF
 [Unit]
 Description=macchanger on %I
 Wants=network-pre.target
