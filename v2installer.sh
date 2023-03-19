@@ -28,10 +28,10 @@ echo "  Will Install my Personal BSPWM/Tint2 System "
 sleep 1
 #output function
 outmsg=(
-"[01] UEFI="$UEFI""
-"[02] set time to using ntp"
-"[03] erased $DRIVE"
-"[04] created partition "$DRIVE"1"
+"[01]Checked for UEFI"
+"[02]set time to using ntp"
+"[03]erased $DRIVE"
+"[04]created partition "$DRIVE"1"
 "[05]created partition "$DRIVE"2"
 "[06]formated partitions"
 "[07]mounted "$DRIVE" to /mnt"
@@ -97,7 +97,7 @@ else
 	UEFI=0
 fi
 
-output 1 #UEFI=$UEFI
+output 1 #checked for UEFI
 #--------------------------------02--------------------------------#
 #set time to using ntp
 timedatectl set-ntp true
@@ -368,9 +368,8 @@ cat >> /mnt/home/$USER_NAME/.xprofile <<\EOF
 export XDG_CONFIG_HOME="$HOME/.config"
 export PATH="$HOME/.local/bin:$PATH"
 
-feh --bg-fill /home/$USER_NAME/Pictures/bg.png
 EOF
-
+echo "feh --bg-fill /home/$USER_NAME/Pictures/bg.png" >> /mnt/home/$USER_NAME/.xprofile
 output 32 #setup xprofile
 #--------------------------------33--------------------------------#
 mkdir -p /mnt/home/$USER_NAME/.config/tint2
