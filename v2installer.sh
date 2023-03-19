@@ -69,8 +69,9 @@ outmsg=(
 "[39]blocked webcam and microphone modules"
 "[40]added kernel parameters"
 "[41]enabled machine-id randomization"
-"[42]unmounted partitions"
-"[43]DONE! thanks for using this script"
+"[42]installed extra packages"
+"[43]unmounted partitions"
+"[44]DONE! thanks for using this script"
 )
 function output() {
 clear
@@ -160,7 +161,7 @@ reflector --country $MIRROR_COUNTRY -l 10 --age 12 --protocol https --sort rate 
 
 output 8 #got fastest mirror in "$MIRROR_COUNTRY" using reflector
 #--------------------------------09--------------------------------#
-pacstrap /mnt base linux-hardened linux-firmware grub mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip picom gvfs gvfs-mtp thunar sudo bspwm sxhkd alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal network-manager-applet wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop rofi wget intel-ucode torsocks mpv firefox
+pacstrap /mnt base linux-hardened linux-firmware grub mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip picom gvfs gvfs-mtp thunar sudo bspwm sxhkd alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal network-manager-applet wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop rofi wget intel-ucode torsocks mpv
 
 output 9 #installed essential packages
 #--------------------------------10--------------------------------#
@@ -603,7 +604,7 @@ super + shift + {Left,Down,Up,Right}
 
 # web browser
 super + w
-    firefox
+    icecat
 
 # terminal emulator
 super + Return
@@ -753,7 +754,7 @@ reboot,systemctl -i reboot,system-reboot
 poweroff,systemctl -i poweroff,system-shutdown
 EOF
 cat >> /mnt/home/$USER_NAME/.config/jgmenu/prepend.csv <<\EOF
-Firefox,firefox,firefox
+Icecat,icecat,icecat
 File manager,thunar,system-file-manager
 Terminal,xterm,utilities-terminal
 ^sep()
@@ -983,9 +984,13 @@ echo "dbus-uuidgen > /etc/machine-id" >> /mnt/home/"$USER_NAME"/.bashrc
 
 output 41 #enabled machine-id randomization
 #--------------------------------42--------------------------------#
+arch-chroot /mnt pacman -Sy icecat bucklespring tor-browser --noconfirm
+
+output 42 #installed extra packages
+#--------------------------------43--------------------------------#
 umount "$DRIVE"1
 umount "$DRIVE"2
-output 42 #unmounted partitions
+output 43 #unmounted partitions
 ###--------------------------------------------------------------###
-output 43 #DONE! thanks for using this script
+output 44 #DONE! thanks for using this script
 exit
