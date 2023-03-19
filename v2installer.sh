@@ -2,6 +2,8 @@
 ###---------------------------variables--------------------------###
 # Install Drive (!!!will be wiped!!!)
 DRIVE='/dev/sda'
+# LUKS Password
+LUKS_PASSWORD='correcthorsebatterystaple'
 # Hostname
 HOSTNAME='hostname'
 # Root User Password.
@@ -147,7 +149,10 @@ parted "$DRIVE" --script name 2 root
 
 output 5 #created "$DRIVE"2
 #--------------------------------06--------------------------------#
-mkfs.ext4 "$DRIVE"2
+echo "$LUKS_PASSWORD" | cryptsetup -q luksFormat "$DRIVE"2
+echo "$LUKS_PASSWORD" | cryptsetup open "$DRIVE"2 cryptroot
+mkfs.ext4 /dev/mapper/cryptroot
+
 if [[ $UEFI -gt 1 ]]
 then
 #format EFI partition
@@ -156,7 +161,13 @@ fi
 
 output 6 #formated partitions
 #--------------------------------07--------------------------------#
-mount "$DRIVE"2 /mnt
+mount /dev/mapper/cryptroot /mnt
+
+if [[ $UEFI -gt 1 ]]
+then
+mkdir -p /mnt/boot
+mount "$DRIVE"1 /mnt/boot
+fi
 
 output 7 #mounted "$DRIVE" to /mnt
 #--------------------------------08--------------------------------#
@@ -241,6 +252,9 @@ arch-chroot /mnt localectl set-x11-keymap "$KEYMAP"
 
 output 21 #set installation keymap to "$KEYMAP"
 #--------------------------------22--------------------------------#
+#mkinitcpio find "keyboard" and replace with "keyboard encrypt"
+sed -i 's/keyboard/keyboard keymap encrypt/g' /mnt/etc/mkinitcpio.conf
+#generate initcpio
 arch-chroot /mnt mkinitcpio -P
 
 output 22 #created initcpio
@@ -293,6 +307,9 @@ else
 	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic lockdown=confidentiality quiet loglevel=0"' /mnt/etc/default/grub
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 fi
+
+sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cryptdevice=UUID="$(blkid "$DRIVE"2 -o value | head -n 1)":cryptroot root=/dev/mapper/cryptroot"/g' /mnt/etc/default/grub
+arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 output 27 #configured grub
 #--------------------------------28--------------------------------#
