@@ -105,7 +105,7 @@ timedatectl set-ntp true
 output 2 #set time to using ntp
 #--------------------------------03--------------------------------#
 dd if=/dev/zero of="$DRIVE" bs=100M count=10 status=progress
-parted "$DRIVE" --script -- mklabel gpt
+parted "$DRIVE" --script mklabel gpt
 
 output 3 #erased $DRIVE
 #--------------------------------04--------------------------------#
