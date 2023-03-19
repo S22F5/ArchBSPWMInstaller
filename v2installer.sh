@@ -70,8 +70,9 @@ outmsg=(
 "[40]added kernel parameters"
 "[41]enabled machine-id randomization"
 "[42]installed extra packages"
-"[43]unmounted partitions"
-"[44]DONE! thanks for using this script"
+"[43]setup macchanger"
+"[44]unmounted partitions"
+"[45]DONE! thanks for using this script"
 )
 function output() {
 clear
@@ -90,6 +91,8 @@ then
 	echo "[E] Drive ""$DRIVE"" does not exist!"
 	exit
 fi
+#get network interface name
+INTERFACE=(ip route get 1.1.1.1 | awk '{print $3}')
 #--------------------------------01--------------------------------#
 #check for uefi(0=bios,1=uefi)
 if [ -d "/sys/firmware/efi" ]; then
@@ -984,14 +987,33 @@ echo "dbus-uuidgen > /etc/machine-id" >> /mnt/home/"$USER_NAME"/.bashrc
 
 output 41 #enabled machine-id randomization
 #--------------------------------42--------------------------------#
-arch-chroot /mnt pacman -Sy icecat bucklespring tor-browser --noconfirm
+arch-chroot /mnt pacman -Sy icecat bucklespring tor-browser macchanger deadbeef libreoffice qdirstat --noconfirm
 arch-chroot /mnt yes|pacman -Scc
 
 output 42 #installed extra packages
 #--------------------------------43--------------------------------#
+cat >> /etc/systemd/system/macspoof@.service << EOF
+[Unit]
+Description=macchanger on %I
+Wants=network-pre.target
+Before=network-pre.target
+BindsTo=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+ExecStart=/usr/bin/macchanger -r %I
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
+EOF
+arch-chroot /mnt systemctl enable macspoof@"$INTERFACE".service
+
+output 43 #setup macchanger
+#--------------------------------44--------------------------------#
 umount "$DRIVE"1
 umount "$DRIVE"2
-output 43 #unmounted partitions
+output 44 #unmounted partitions
 ###--------------------------------------------------------------###
-output 44 #DONE! thanks for using this script
+output 45 #DONE! thanks for using this script
 exit
