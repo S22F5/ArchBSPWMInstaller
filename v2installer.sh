@@ -985,6 +985,7 @@ echo "dbus-uuidgen > /etc/machine-id" >> /mnt/home/"$USER_NAME"/.bashrc
 output 41 #enabled machine-id randomization
 #--------------------------------42--------------------------------#
 arch-chroot /mnt pacman -Sy icecat bucklespring tor-browser --noconfirm
+arch-chroot /mnt yes|pacman -Scc
 
 output 42 #installed extra packages
 #--------------------------------43--------------------------------#
