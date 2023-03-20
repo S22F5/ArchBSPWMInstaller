@@ -1038,6 +1038,7 @@ output 42 #installed extra packages
 #--------------------------------44--------------------------------#
 umount "$DRIVE"1
 umount "$DRIVE"2
+umount /mnt
 output 44 #unmounted partitions
 ###--------------------------------------------------------------###
 output 45 #DONE! thanks for using this script
