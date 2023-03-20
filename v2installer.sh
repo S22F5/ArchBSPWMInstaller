@@ -308,7 +308,9 @@ else
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 fi
 
-sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cryptdevice=UUID="$(blkid "$DRIVE"2 -o value | head -n 1)":cryptroot root=/dev/mapper/cryptroot"/g' /mnt/etc/default/grub
+uuid="$(blkid "$DRIVE"2 -o value | head -n 1)"
+sed -i "s|GRUB_CMDLINE_LINUX=|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$uuid:cryptroot root=/dev/mapper/cryptroot\"|" /mnt/etc/default/grub
+
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 output 27 #configured grub
