@@ -163,12 +163,6 @@ output 6 #formated partitions
 #--------------------------------07--------------------------------#
 mount /dev/mapper/cryptroot /mnt
 
-if [[ $UEFI -gt 1 ]]
-then
-mkdir -p /mnt/boot
-mount "$DRIVE"1 /mnt/boot
-fi
-
 output 7 #mounted "$DRIVE" to /mnt
 #--------------------------------08--------------------------------#
 reflector --country $MIRROR_COUNTRY -l 10 --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
@@ -253,7 +247,7 @@ arch-chroot /mnt localectl set-x11-keymap "$KEYMAP"
 output 21 #set installation keymap to "$KEYMAP"
 #--------------------------------22--------------------------------#
 #mkinitcpio find "keyboard" and replace with "keyboard encrypt"
-sed -i 's/keyboard/keyboard keymap encrypt/g' /mnt/etc/mkinitcpio.conf
+sed -i 's/keyboard/keyboard encrypt/g' /mnt/etc/mkinitcpio.conf
 #generate initcpio
 arch-chroot /mnt mkinitcpio -P
 
