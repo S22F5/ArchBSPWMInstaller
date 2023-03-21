@@ -149,8 +149,8 @@ parted "$DRIVE" --script name 2 root
 
 output 5 #created "$DRIVE"2
 #--------------------------------06--------------------------------#
-echo "$LUKS_PASSWORD" | cryptsetup -q luksFormat "$DRIVE"2
-echo "$LUKS_PASSWORD" | cryptsetup open "$DRIVE"2 cryptroot
+printf "$LUKS_PASSWORD" | cryptsetup -q luksFormat "$DRIVE"2
+printf "$LUKS_PASSWORD" | cryptsetup open "$DRIVE"2 cryptroot
 mkfs.ext4 /dev/mapper/cryptroot
 
 if [[ $UEFI -gt 1 ]]
