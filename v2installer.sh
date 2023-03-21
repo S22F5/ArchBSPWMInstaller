@@ -247,7 +247,7 @@ arch-chroot /mnt localectl set-x11-keymap "$KEYMAP"
 output 21 #set installation keymap to "$KEYMAP"
 #--------------------------------22--------------------------------#
 #mkinitcpio find "keyboard" and replace with "keyboard encrypt"
-sed -i 's/keyboard/keyboard encrypt/g' /mnt/etc/mkinitcpio.conf
+sed -i 's/(base.*/(base udev autodetect modconf kms keyboard keymap consolefont block encrypt filesystems fsck)/g' /mnt/etc/mkinitcpio.conf
 #generate initcpio
 arch-chroot /mnt mkinitcpio -P
 
