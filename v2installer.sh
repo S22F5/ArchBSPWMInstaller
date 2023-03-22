@@ -287,7 +287,7 @@ arch-chroot /mnt systemctl enable getty@tty1.service
 
 output 26 #enabled autologin
 #--------------------------------27--------------------------------#
-arch-chroot /mnt pacman -Sy chaotic-aur/grub-improved-luks2-git
+arch-chroot /mnt pacman -Sy chaotic-aur/grub-improved-luks2-git --noconfirm
 if [[ $UEFI -gt 0 ]]
 then
 	#install and setup grub2 for uefi
