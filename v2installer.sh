@@ -149,7 +149,7 @@ parted "$DRIVE" --script name 2 root
 
 output 5 #created "$DRIVE"2
 #--------------------------------06--------------------------------#
-printf "$LUKS_PASSWORD" | cryptsetup -q luksFormat --type luks1 "$DRIVE"2
+printf "$LUKS_PASSWORD" | cryptsetup -q luksFormat "$DRIVE"2
 printf "$LUKS_PASSWORD" | cryptsetup open "$DRIVE"2 cryptroot
 mkfs.ext4 /dev/mapper/cryptroot
 
@@ -169,7 +169,7 @@ reflector --country $MIRROR_COUNTRY -l 10 --age 12 --protocol https --sort rate 
 
 output 8 #got fastest mirror in "$MIRROR_COUNTRY" using reflector
 #--------------------------------09--------------------------------#
-pacstrap /mnt base linux-hardened linux-firmware grub mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip picom gvfs gvfs-mtp thunar sudo bspwm sxhkd alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal network-manager-applet wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop rofi wget intel-ucode torsocks mpv
+pacstrap /mnt base linux-hardened linux-firmware mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip picom gvfs gvfs-mtp thunar sudo bspwm sxhkd alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop rofi wget intel-ucode torsocks mpv
 
 output 9 #installed essential packages
 #--------------------------------10--------------------------------#
@@ -287,6 +287,7 @@ arch-chroot /mnt systemctl enable getty@tty1.service
 
 output 26 #enabled autologin
 #--------------------------------27--------------------------------#
+arch-chroot /mnt pacman -Sy chaotic-aur/grub-improved-luks2-git
 if [[ $UEFI -gt 0 ]]
 then
 	#install and setup grub2 for uefi
