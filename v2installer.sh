@@ -307,7 +307,7 @@ then
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 else
 	#install and setup grub2 for mbr/bios
-	arch-chroot /mnt pacman -Sy aur/grub --noconfirm
+	arch-chroot /mnt pacman -Sy core/grub --noconfirm
 	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic lockdown=confidentiality quiet loglevel=0"' /mnt/etc/default/grub
 	uuid="$(blkid "$DRIVE"2 -o value | head -n 1)"
 	sed -i "s|GRUB_CMDLINE_LINUX=.*|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$uuid:cryptroot root=/dev/mapper/cryptroot\"|" /mnt/etc/default/grub
