@@ -2,16 +2,16 @@
 ###---------------------------variables--------------------------###
 # Install Drive (!!!will be wiped!!!)
 DRIVE='/dev/sda'
-# LUKS Password
-LUKS_PASSWORD='correcthorsebatterystaple'
 # Hostname
 HOSTNAME='hostname'
-# Root User Password.
-ROOT_PASSWORD='root'
 # Main User
 USER_NAME='user'
+# Root User Password.
+ROOT_PASSWORD='root'
 # Main User Password
 USER_PASSWORD='pass'
+#LUKS Password
+LUKS_PASSWORD='correcthorsebatterystaple'
 # Keymap
 KEYMAP='us'
 # Mirror Country
@@ -149,7 +149,13 @@ parted "$DRIVE" --script name 2 root
 
 output 5 #created "$DRIVE"2
 #--------------------------------06--------------------------------#
-printf "$LUKS_PASSWORD" | cryptsetup -q luksFormat "$DRIVE"2
+if [[ $UEFI -gt 0 ]]
+then
+	printf "$LUKS_PASSWORD" | cryptsetup -q luksFormat "$DRIVE"2
+else
+	printf "$LUKS_PASSWORD" | cryptsetup -q luksFormat --type luks1 "$DRIVE"2
+fi
+
 printf "$LUKS_PASSWORD" | cryptsetup open "$DRIVE"2 cryptroot
 mkfs.ext4 /dev/mapper/cryptroot
 
@@ -287,10 +293,10 @@ arch-chroot /mnt systemctl enable getty@tty1.service
 
 output 26 #enabled autologin
 #--------------------------------27--------------------------------#
-arch-chroot /mnt pacman -Sy chaotic-aur/grub-improved-luks2-git --noconfirm
 if [[ $UEFI -gt 0 ]]
 then
 	#install and setup grub2 for uefi
+	arch-chroot /mnt pacman -Sy chaotic-aur/grub-improved-luks2-git --noconfirm
 	arch-chroot /mnt mkdir /boot/EFI
 	arch-chroot /mnt mount "$DRIVE"1 /boot/EFI
 	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 page_alloc.shuffle=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic module.sig_enforce=1 lockdown=confidentiality quiet loglevel=0"' /mnt/etc/default/grub
@@ -301,6 +307,7 @@ then
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 else
 	#install and setup grub2 for mbr/bios
+	arch-chroot /mnt pacman -Sy aur/grub --noconfirm
 	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic lockdown=confidentiality quiet loglevel=0"' /mnt/etc/default/grub
 	uuid="$(blkid "$DRIVE"2 -o value | head -n 1)"
 	sed -i "s|GRUB_CMDLINE_LINUX=.*|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$uuid:cryptroot root=/dev/mapper/cryptroot\"|" /mnt/etc/default/grub
