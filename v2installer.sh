@@ -33,24 +33,24 @@ outmsg=(
 "[01]Checked for UEFI"
 "[02]set time to using ntp"
 "[03]erased $DRIVE"
-"[04]created partition "$DRIVE"1"
-"[05]created partition "$DRIVE"2"
+"[04]created partition '$DRIVE'1"
+"[05]created partition '$DRIVE'2"
 "[06]formated partitions"
-"[07]mounted "$DRIVE" to /mnt"
-"[08]got fastest mirror in "$MIRROR_COUNTRY" using reflector"
+"[07]mounted '$DRIVE' to /mnt"
+"[08]got fastest mirror in '$MIRROR_COUNTRY' using reflector"
 "[09]installed essential packages"
 "[10]generated fstab"
 "[11]copied some configs"
 "[12]set root password"
-"[13]added "$USER_NAME""
+"[13]added '$USER_NAME'"
 "[14]generated xdg user directory structure"
 "[15]installed yay"
-"[16]set "$USER_NAME" password"
+"[16]set '$USER_NAME' password"
 "[17]added chaotic repository"
-"[18]set timezone to "$TIMEZONE""
+"[18]set timezone to '$TIMEZONE'"
 "[19]set time using bios clock"
-"[20]generated "$LOCALE" locale"
-"[21]set installation keymap to "$KEYMAP""
+"[20]generated '$LOCALE' locale"
+"[21]set installation keymap to '$KEYMAP'"
 "[22]created initcpio"
 "[23]enabled multilib mirrors"
 "[24]setup networking"
@@ -94,7 +94,7 @@ then
 	exit
 fi
 #get network interface name
-INTERFACE=$(ip route get 1.1.1.1 | awk '{print $5}')
+#INTERFACE=$(ip route get 1.1.1.1 | awk '{print $5}')
 #--------------------------------01--------------------------------#
 #check for uefi(0=bios,1=uefi)
 if [ -d "/sys/firmware/efi" ]; then
@@ -151,12 +151,12 @@ output 5 #created "$DRIVE"2
 #--------------------------------06--------------------------------#
 if [[ $UEFI -gt 0 ]]
 then
-	printf "$LUKS_PASSWORD" | cryptsetup -q luksFormat "$DRIVE"2
+	printf "%s" "$LUKS_PASSWORD" | cryptsetup -q luksFormat "$DRIVE"2
 else
-	printf "$LUKS_PASSWORD" | cryptsetup -q luksFormat --type luks1 "$DRIVE"2
+	printf "%s" "$LUKS_PASSWORD" | cryptsetup -q luksFormat --type luks1 "$DRIVE"2
 fi
 
-printf "$LUKS_PASSWORD" | cryptsetup open "$DRIVE"2 cryptroot
+printf "%s" "$LUKS_PASSWORD" | cryptsetup open "$DRIVE"2 cryptroot
 mkfs.ext4 /dev/mapper/cryptroot
 
 if [[ $UEFI -gt 1 ]]
@@ -206,7 +206,7 @@ output 14 #generated xdg user directory structure
 #--------------------------------15--------------------------------#
 arch-chroot /mnt passwd $USER_NAME -d
 echo "%wheel ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
-printf "cd /home/$USER_NAME && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm" | arch-chroot /mnt /bin/bash -c "su $USER_NAME"
+printf "cd /home/%s && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm" "$USER_NAME" | arch-chroot /mnt /bin/bash -c "su $USER_NAME"
 
 output 15 #installed yay
 #--------------------------------16--------------------------------#
