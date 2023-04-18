@@ -474,7 +474,7 @@ border_color_pressed = #222222 90
 
 #-------------------------------------
 # Panel
-panel_items = PLTSC
+panel_items = P:TSC
 panel_size = 100% 24
 panel_margin = 0 0
 panel_padding = 0 0 0
@@ -491,7 +491,7 @@ autohide_hide_timeout = 1.5
 autohide_height = 6
 strut_policy = follow_size
 panel_window_name = tint2
-disable_transparency = 0
+disable_transparency = 1
 mouse_effects = 1
 font_shadow = 0
 mouse_hover_icon_asb = 100 0 10
@@ -504,7 +504,7 @@ taskbar_hide_if_empty = 1
 taskbar_padding = 0 0 0
 taskbar_background_id = 4
 taskbar_active_background_id = 5
-taskbar_name = 1
+taskbar_name = 0
 taskbar_hide_inactive_tasks = 0
 taskbar_hide_different_monitor = 1
 taskbar_hide_different_desktop = 0
@@ -557,24 +557,8 @@ systray_icon_asb = 100 0 35
 systray_monitor = 1
 systray_name_filter =
 
-#-------------------------------------
-# Launcher
-launcher_padding = 5 0 5
-launcher_background_id = 5
-launcher_icon_background_id = 0
-launcher_icon_size = 16
-launcher_icon_asb = 100 0 0
-launcher_icon_theme = ArchLabs-Dark
-launcher_icon_theme_override = 0
-startup_notifications = 1
-launcher_tooltip = 1
-launcher_item_app = firefox
-launcher_item_app = thunar
-launcher_item_app = alacritty
-
-#-------------------------------------
 # Clock
-time1_format = %H:%M
+time1_format = %H:%M:%S
 time2_format =
 time1_font = sans 12
 time1_timezone =
@@ -586,7 +570,7 @@ clock_background_id = 5
 clock_tooltip =
 clock_tooltip_timezone =
 clock_lclick_command = gsimplecal
-clock_rclick_command = alacritty -e htop
+clock_rclick_command = kitty htop
 clock_mclick_command =
 clock_uwheel_command =
 clock_dwheel_command =
@@ -594,16 +578,16 @@ clock_dwheel_command =
 #-------------------------------------
 # Button 1
 button = new
-button_icon = jgmenu
-button_text =
+button_icon = 
+button_text = 🙿
 button_lclick_command= jgmenu_run >/dev/null 2>&1 &
 button_rclick_command= exo-open ~/.config/jgmenu/jgmenurc
 button_mclick_command=
 button_uwheel_command=
 button_dwheel_command=
-button_font_color = #000000 100
-button_padding = 8 2
-button_background_id = 5
+button_font_color = #d8d8d8 100
+button_padding = 2 2
+button_background_id = 6
 button_centered = 1
 button_max_icon_size = 22
 
@@ -615,6 +599,14 @@ tooltip_padding = 10 6
 tooltip_background_id = 6
 tooltip_font_color = #d8d8d8 100
 tooltip_font = sans 10
+
+#-------------------------------------
+# Seperator
+separator = new
+separator_background_id = 5
+separator_style = line
+separator_size = 2
+separator_padding = 2 5
 EOF
 
 output 33 #setup tint2rc
