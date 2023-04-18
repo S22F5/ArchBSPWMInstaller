@@ -1,6 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/images/logo_darkmode.png?cache=none">
-  <img src=".github/images/logo_lightmode.png?cache=none">
+  <source media="(prefers-color-scheme: light)" srcset=".github/images/logo_lightmode.png?cache=none">
+  <img src=".github/images/logo_lightmode.png?cache=none" alt= ArchBSPWMInstaller>
 </picture>
 
 ## About
