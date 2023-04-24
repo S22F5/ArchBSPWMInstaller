@@ -781,16 +781,16 @@ EOF
 cat >> /mnt/home/$USER_NAME/.config/jgmenu/jgmenurc <<\EOF
 # jgmenurc
 
-stay_alive           = 1
+stay_alive           = 0
 #hide_on_startup     = 0
 csv_cmd              = pmenu
 tint2_look           = 1
 at_pointer           = 0
 terminal_exec        = xterm
 terminal_args        = -e
-#monitor             = 0
+monitor              = 0
 
-menu_margin_x        = 4
+menu_margin_x        = 6
 menu_margin_y        = 32
 menu_width           = 200
 menu_padding_top     = 10
