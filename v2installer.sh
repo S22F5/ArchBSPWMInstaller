@@ -222,6 +222,7 @@ arch-chroot /mnt pacman-key --lsign-key FBA220DFC880C036
 arch-chroot /mnt pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm
 echo "[chaotic-aur]" >> /mnt/etc/pacman.conf
 echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /mnt/etc/pacman.conf
+echo "IgnorePkg = xdg-desktop-portal" >> /mnt/etc/pacman.conf # making sure not to install (slows down thunar startup)
 
 output 17 #added chaotic repository
 #--------------------------------18--------------------------------#
