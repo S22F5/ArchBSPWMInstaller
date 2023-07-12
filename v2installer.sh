@@ -62,8 +62,8 @@ outmsg=(
 "[30]setup bspwmrc"
 "[31]setup background"
 "[32]setup xprofile"
-"[33]setup tint2rc"
-"[34]setup sxhkd"
+"[33]setup tint2rc & sxhkd"
+"[34]setup xterm"
 "[35]setup jgmenu"
 "[36]fixed gsimplecal"
 "[37]setup themes"
@@ -175,7 +175,7 @@ reflector --country $MIRROR_COUNTRY -l 10 --age 12 --protocol https --sort rate 
 
 output 8 #got fastest mirror in "$MIRROR_COUNTRY" using reflector
 #--------------------------------09--------------------------------#
-pacstrap /mnt base linux-hardened linux-firmware mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip picom gvfs gvfs-mtp thunar sudo bspwm sxhkd alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git alacritty htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop rofi wget intel-ucode torsocks mpv
+pacstrap /mnt base linux-hardened linux-firmware mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip picom gvfs gvfs-mtp thunar sudo bspwm sxhkd alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop rofi wget intel-ucode torsocks mpv
 
 output 9 #installed essential packages
 #--------------------------------10--------------------------------#
@@ -571,7 +571,7 @@ clock_background_id = 5
 clock_tooltip =
 clock_tooltip_timezone =
 clock_lclick_command = gsimplecal
-clock_rclick_command = kitty htop
+clock_rclick_command = xterm htop
 clock_mclick_command =
 clock_uwheel_command =
 clock_dwheel_command =
@@ -610,8 +610,6 @@ separator_size = 2
 separator_padding = 2 5
 EOF
 
-output 33 #setup tint2rc
-#--------------------------------34--------------------------------#
 #setup sxhkd
 mkdir -p /mnt/home/$USER_NAME/.config/sxhkd
 cat >> /mnt/home/$USER_NAME/.config/sxhkd/sxhkdrc <<\EOF
@@ -628,7 +626,7 @@ super + w
 
 # terminal emulator
 super + Return
-    alacritty
+    xterm
 
 # file manager
 super + f
@@ -761,7 +759,19 @@ super + d
 	rofi -show window
 EOF
 
-output 34 #setup sxhkd
+output 33 #setup bspwmrc & sxhkdrc
+
+#--------------------------------34--------------------------------#
+cat >> /mnt/home/$USER_NAME/.Xdefaults <<\EOF
+XTerm.vt100.reverseVideo: true
+
+*VT100*translations:      #override \n\
+	Ctrl Shift <Key>C:  copy-selection(SELECT) \n\
+	Ctrl Shift <Key>V:  insert-selection(SELECT)
+EOF
+
+output 34 #setup xterm
+
 #--------------------------------35--------------------------------#
 mkdir -p /mnt/home/$USER_NAME/.config/jgmenu
 cat >> /mnt/home/$USER_NAME/.config/jgmenu/append.csv <<\EOF
