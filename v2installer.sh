@@ -270,11 +270,12 @@ arch-chroot /mnt wget "https://raw.githubusercontent.com/StevenBlack/hosts/maste
 sed -i "17s/.*/127.0.1.1 $HOSTNAME/" /mnt/etc/hosts
 #set iptables rules
 mkdir -p /mnt/etc/iptables/
-cp rules.v4 /mnt/etc/iptables/
+cp -f rules.v4 /mnt/etc/iptables/iptables.rules
 #enable network services
 arch-chroot /mnt systemctl enable iwd
 arch-chroot /mnt systemctl enable dhcpcd
 arch-chroot /mnt systemctl enable systemd-networkd
+arch-chroot /mnt systemctl enable iptables
 #set system hostname
 touch /mnt/etc/hostname
 echo "$HOSTNAME" > /mnt/etc/hostname
