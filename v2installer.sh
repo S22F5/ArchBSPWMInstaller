@@ -1020,7 +1020,7 @@ echo "set number" >> /mnt/home/"$USER_NAME"/.vimrc
 
 output 41 #changed configs
 #--------------------------------42--------------------------------#
-arch-chroot /mnt yay -Sy lynis macchanger cmus libreoffice qdirstat noto-fonts noto-fonts-extra noto-fonts-cjk ttf-liberation --noconfirm
+arch-chroot /mnt yay -Sy lynis-git macchanger cmus libreoffice qdirstat noto-fonts noto-fonts-extra noto-fonts-cjk ttf-liberation --noconfirm
 #cant install mercury now because of systemd
 echo "yay -Sy mercury-browser-bin --noconfirm" > /mnt/home/"$USER_NAME"/finish_install.sh
 chmod +x /mnt/home/"$USER_NAME"/finish_install.sh
