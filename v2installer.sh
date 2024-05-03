@@ -70,7 +70,7 @@ outmsg=(
 "[38]fixed some permissions"
 "[39]blocked webcam and microphone modules"
 "[40]added kernel parameters"
-"[41]enabled machine-id randomization"
+"[41]changed configs"
 "[42]installed extra packages"
 "[43]setup macchanger"
 "[44]unmounted partitions"
@@ -80,6 +80,8 @@ function output() {
 clear
 printf '%s\n' "${outmsg[@]:0:$1}"
 }
+#extract files used
+tar -xf files.tar.gz
 ###-------------------------sanity_checks------------------------###
 #check internet connection
 if ! ping 8.8.8.8 -c 1 >/dev/null 2>&1;
@@ -175,7 +177,7 @@ reflector --country $MIRROR_COUNTRY -l 10 --age 12 --protocol https --sort rate 
 
 output 8 #got fastest mirror in "$MIRROR_COUNTRY" using reflector
 #--------------------------------09--------------------------------#
-pacstrap /mnt base linux-hardened linux-firmware mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings alsa pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip picom gvfs gvfs-mtp thunar sudo bspwm sxhkd alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop rofi wget intel-ucode torsocks mpv
+pacstrap /mnt base linux-hardened linux-firmware mesa iwd efibootmgr xf86-video-amdgpu vulkan-radeon xf86-video-ati xf86-video-amdgpu freetype2 vim xorg-server xorg-xinit xterm feh libva-mesa-driver xorg tint2 jgmenu pavucontrol qt5-base xfce4-settings pulseaudio ntfs-3g exfat-utils dhcpcd nano mousepad git zip unzip picom gvfs gvfs-mtp thunar sudo bspwm sxhkd alsa-firmware alsa-lib alsa-plugins ffmpeg gst-libav gst-plugins-base gst-plugins-good gstreamer qt6-base libmad libmatroska pamixer pulseaudio-alsa xdg-user-dirs arandr dunst exo gnome-keyring gsimplecal wmctrl man-pages man-db p7zip terminus-font xorg-xset xorg-xsetroot dmenu rxvt-unicode trayer git htop base-devel xbindkeys playerctl adapta-gtk-theme arc-solid-gtk-theme htop rofi wget intel-ucode torsocks mpv neovim redshift torbrowser-launcher firejail
 
 output 9 #installed essential packages
 #--------------------------------10--------------------------------#
@@ -207,7 +209,7 @@ output 14 #generated xdg user directory structure
 arch-chroot /mnt passwd $USER_NAME -d
 echo "%wheel ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 printf "cd /home/%s && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm" "$USER_NAME" | arch-chroot /mnt /bin/bash -c "su $USER_NAME"
-
+rm -R /mnt/home/"$USER_NAME"/yay-bin/
 output 15 #installed yay
 #--------------------------------16--------------------------------#
 arch-chroot /mnt passwd $USER_NAME << EOD
@@ -217,12 +219,11 @@ EOD
 
 output 16 #set "$USER_NAME" password
 #--------------------------------17--------------------------------#
-arch-chroot /mnt pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
-arch-chroot /mnt pacman-key --lsign-key FBA220DFC880C036
+arch-chroot /mnt pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+arch-chroot /mnt pacman-key --lsign-key 3056513887B78AEB
 arch-chroot /mnt pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm
 echo "[chaotic-aur]" >> /mnt/etc/pacman.conf
 echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /mnt/etc/pacman.conf
-echo "IgnorePkg = xdg-desktop-portal" >> /mnt/etc/pacman.conf # making sure not to install (slows down thunar startup)
 
 output 17 #added chaotic repository
 #--------------------------------18--------------------------------#
@@ -267,9 +268,9 @@ output 23 #enabled multilib mirrors
 #--------------------------------24--------------------------------#
 arch-chroot /mnt wget "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts" -O /etc/hosts
 sed -i "17s/.*/127.0.1.1 $HOSTNAME/" /mnt/etc/hosts
-while IFS= read -r ip ; do
-  arch-chroot /mnt iptables -A INPUT -s "$ip" -j DROP
-done < glowblock.txt
+#set iptables rules
+mkdir -p /mnt/etc/iptables/
+cp rules.v4 /mnt/etc/iptables/
 #enable network services
 arch-chroot /mnt systemctl enable iwd
 arch-chroot /mnt systemctl enable dhcpcd
@@ -351,6 +352,7 @@ fi
 [ -r ~/.xprofile ] && . ~/.xprofile
 
 pgrep -x sxhkd > /dev/null || sxhkd &
+redshift -P -O 4000k &
 tint2 &
 #launch session, commands below this line will be ignored
 exec bspwm
@@ -385,7 +387,7 @@ EOF
 output 30 #setup bspwmrc
 #--------------------------------31--------------------------------#
 mkdir -p /mnt/home/$USER_NAME/Pictures
-cp bg.png /mnt/home/$USER_NAME/Pictures/
+cp bg.png /mnt/home/$USER_NAME/.bg.png
 
 output 31 #setup background
 #--------------------------------32--------------------------------#
@@ -398,7 +400,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export PATH="$HOME/.local/bin:$PATH"
 
 EOF
-echo "feh --bg-fill /home/$USER_NAME/Pictures/bg.png" >> /mnt/home/$USER_NAME/.xprofile
+echo "feh --bg-fill /home/$USER_NAME/.bg.png" >> /mnt/home/$USER_NAME/.xprofile
 output 32 #setup xprofile
 #--------------------------------33--------------------------------#
 mkdir -p /mnt/home/$USER_NAME/.config/tint2
@@ -622,7 +624,7 @@ super + shift + {Left,Down,Up,Right}
 
 # web browser
 super + w
-    icecat
+    firejail mercury-browser
 
 # terminal emulator
 super + Return
@@ -784,7 +786,7 @@ reboot,systemctl -i reboot,system-reboot
 poweroff,systemctl -i poweroff,system-shutdown
 EOF
 cat >> /mnt/home/$USER_NAME/.config/jgmenu/prepend.csv <<\EOF
-Icecat,icecat,icecat
+Mercury,firejail mercury-browser,mercury-browser
 File manager,thunar,system-file-manager
 Terminal,xterm,utilities-terminal
 ^sep()
@@ -881,7 +883,7 @@ output 36 #fixed gsimplecal
 cp -r themes/ArchLabs-Dark/ /mnt/usr/share/themes
 cp -r icons/ArchLabs-Dark/ /mnt/usr/share/icons
 mkdir -p "/mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/"
-cat >> "/mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/xsettings.xml" <<\EOF
+cat >> /mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/xsettings.xml <<\EOF
 <?xml version="1.0" encoding="UTF-8"?>
 
 <channel name="xsettings" version="1.0">
@@ -929,7 +931,7 @@ cat >> "/mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/xsettings.xml" <<
 EOF
 #gtk-3.0
 mkdir -p "/mnt/home/$USER_NAME/.config/gtk-3.0/"
-cat >> "/mnt/home/$USER_NAME/.config/gtk-3.0/settings.ini" << EOF
+cat >> /mnt/home/$USER_NAME/.config/gtk-3.0/settings.ini <<\EOF
 [Settings]
 gtk-theme-name=ArchLabs-Dark
 gtk-icon-theme-name=ArchLabs-Dark
@@ -1011,12 +1013,17 @@ touch /mnt/etc/machine-id
 arch-chroot /mnt chown "$USER_NAME" /etc/machine-id
 chmod 664 /mnt/etc/machine-id
 echo "dbus-uuidgen > /etc/machine-id" >> /mnt/home/"$USER_NAME"/.bashrc
+echo "alias ls='ls -la --color=auto'" >> /mnt/home/"$USER_NAME"/.bashrc
+echo "alias passgen='openssl rand -base64 48'" >> /mnt/home/"$USER_NAME"/.bashrc
+echo "set number" >> /mnt/home/"$USER_NAME"/.vimrc
 
-output 41 #enabled machine-id randomization
+output 41 #changed configs
 #--------------------------------42--------------------------------#
-arch-chroot /mnt pacman -Sy icecat bucklespring tor-browser macchanger deadbeef libreoffice qdirstat --noconfirm
-arch-chroot /mnt yes|pacman -Scc
-
+arch-chroot /mnt yay -Sy lynis macchanger cmus libreoffice qdirstat noto-fonts noto-fonts-extra noto-fonts-cjk ttf-liberation --noconfirm
+#cant install mercury now because of systemd
+echo "yay -Sy mercury-browser-bin --noconfirm" > /mnt/home/"$USER_NAME"/finish_install.sh
+chmod +x /mnt/home/"$USER_NAME"/finish_install.sh
+arch-chroot /mnt locale-gen
 output 42 #installed extra packages
 #--------------------------------43--------------------------------#
 #cat >> /mnt/etc/systemd/system/macspoof@.service << EOF
@@ -1044,4 +1051,5 @@ umount /mnt
 output 44 #unmounted partitions
 ###--------------------------------------------------------------###
 output 45 #DONE! thanks for using this script
+printf "\n once rebooted run './finish_install.sh' in your home directory"
 exit
