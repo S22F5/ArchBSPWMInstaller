@@ -412,8 +412,8 @@ output 41 #changed configs
 #--------------------------------42--------------------------------#
 arch-chroot /mnt yay -Sy macchanger cmus libreoffice qdirstat noto-fonts noto-fonts-extra noto-fonts-cjk ttf-liberation --noconfirm
 #cant install mercury now because of systemd
-echo "dconf load / < /home/$USER_NAME/.config/dconf/restore"
-echo "yay -Sy mercury-browser-bin lynis-git --noconfirm" > /mnt/home/"$USER_NAME"/finish_install.sh
+echo "dconf load / < /home/$USER_NAME/.config/dconf/restore" > /mnt/home/"$USER_NAME"/finish_install.sh
+echo "yay -Sy mercury-browser-bin lynis-git --noconfirm" >> /mnt/home/"$USER_NAME"/finish_install.sh
 chmod +x /mnt/home/"$USER_NAME"/finish_install.sh
 arch-chroot /mnt locale-gen
 mkdir -p /mnt/home/"$USER_NAME"/.config/dconf
