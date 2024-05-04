@@ -383,6 +383,13 @@ cp files/xsettings.xml /mnt/home/$USER_NAME/.config/xfce4/xfce-perchannel-xml/xs
 mkdir -p "/mnt/home/$USER_NAME/.config/gtk-3.0/"
 cp files/gtk3_settings.ini /mnt/home/$USER_NAME/.config/gtk-3.0/settings.ini
 
+echo "dconf load / < /home/$USER_NAME/.config/dconf/restore" > /mnt/home/"$USER_NAME"/finish_install.sh
+echo "yay -Sy mercury-browser-bin lynis-git --noconfirm" >> /mnt/home/"$USER_NAME"/finish_install.sh
+chmod +x /mnt/home/"$USER_NAME"/finish_install.sh
+arch-chroot /mnt locale-gen
+mkdir -p /mnt/home/"$USER_NAME"/.config/dconf
+cp files/dconf_user /mnt/home/"$USER_NAME"/.config/dconf/restore 
+
 output 37 #setup themes
 #--------------------------------38--------------------------------#
 arch-chroot /mnt chown -R $USER_NAME home/$USER_NAME/
@@ -411,13 +418,6 @@ echo "set number" >> /mnt/home/"$USER_NAME"/.vimrc
 output 41 #changed configs
 #--------------------------------42--------------------------------#
 arch-chroot /mnt yay -Sy macchanger cmus libreoffice qdirstat noto-fonts noto-fonts-extra noto-fonts-cjk ttf-liberation --noconfirm
-#cant install mercury now because of systemd
-echo "dconf load / < /home/$USER_NAME/.config/dconf/restore" > /mnt/home/"$USER_NAME"/finish_install.sh
-echo "yay -Sy mercury-browser-bin lynis-git --noconfirm" >> /mnt/home/"$USER_NAME"/finish_install.sh
-chmod +x /mnt/home/"$USER_NAME"/finish_install.sh
-arch-chroot /mnt locale-gen
-mkdir -p /mnt/home/"$USER_NAME"/.config/dconf
-cp files/dconf_user /mnt/home/"$USER_NAME"/.config/dconf/restore 
 output 42 #installed extra packages
 #--------------------------------43--------------------------------#
 #cat >> /mnt/etc/systemd/system/macspoof@.service << EOF
