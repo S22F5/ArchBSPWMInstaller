@@ -384,7 +384,9 @@ mkdir -p "/mnt/home/$USER_NAME/.config/gtk-3.0/"
 cp files/gtk3_settings.ini /mnt/home/$USER_NAME/.config/gtk-3.0/settings.ini
 
 echo "dconf load / < /home/$USER_NAME/.config/dconf/restore" > /mnt/home/"$USER_NAME"/finish_install.sh
-echo "yay -Sy mercury-browser-bin lynis-git --noconfirm" >> /mnt/home/"$USER_NAME"/finish_install.sh
+echo "yay -Sy mercury-browser-bin lynis-git chkrootkit --noconfirm" >> /mnt/home/"$USER_NAME"/finish_install.sh
+echo "yes y | yay -Scc" >> /mnt/home/"$USER_NAME"/finish_install.sh
+echo "mv /home/"$USER_NAME"/finish_install.sh /tmp" >> /mnt/home/"$USER_NAME"/finish_install.sh
 chmod +x /mnt/home/"$USER_NAME"/finish_install.sh
 arch-chroot /mnt locale-gen
 mkdir -p /mnt/home/"$USER_NAME"/.config/dconf
