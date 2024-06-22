@@ -12,8 +12,8 @@ USER_PASSWORD='pass'
 LUKS_PASSWORD='correcthorsebatterystaple'
 # Keymap
 KEYMAP='us'
-# Mirror Country
-MIRROR_COUNTRY='Germany'
+# Mirror Country (lowercase)
+MIRROR_COUNTRY='germany'
 # Timezone in "Zone/City" Format
 TIMEZONE='Europe/Vienna'
 # Locale
