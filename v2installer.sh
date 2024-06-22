@@ -2,8 +2,6 @@
 ###---------------------------variables--------------------------###
 # Install Drive (!!!will be wiped!!!)
 DRIVE='/dev/sda'
-# Hostname
-HOSTNAME='hostname'
 # Main User
 USER_NAME='user'
 # Root User Password.
@@ -72,7 +70,7 @@ outmsg=(
 "[40]added kernel parameters"
 "[41]changed configs"
 "[42]installed extra packages"
-"[43]setup macchanger"
+"[43]setup macchanger & hostname changer"
 "[44]unmounted partitions"
 "[45]DONE! thanks for using this script"
 )
@@ -269,7 +267,7 @@ echo "Include = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
 output 23 #enabled multilib mirrors
 #--------------------------------24--------------------------------#
 arch-chroot /mnt wget "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts" -O /etc/hosts
-sed -i "17s/.*/127.0.1.1 $HOSTNAME/" /mnt/etc/hosts
+sed -i "17s/.*/127.0.1.1 placeholder/" /mnt/etc/hosts
 #set iptables rules
 mkdir -p /mnt/etc/iptables/
 cp -f files/rules.v4 /mnt/etc/iptables/iptables.rules
@@ -280,7 +278,7 @@ arch-chroot /mnt systemctl enable systemd-networkd
 arch-chroot /mnt systemctl enable iptables
 #set system hostname
 touch /mnt/etc/hostname
-echo "$HOSTNAME" > /mnt/etc/hostname
+echo "placeholder" > /mnt/etc/hostname
 
 output 24 #setup networking
 #--------------------------------25--------------------------------#
@@ -387,6 +385,7 @@ echo "dconf load / < /home/$USER_NAME/.config/dconf/restore" > /mnt/home/"$USER_
 echo "yay -Sy mercury-browser-bin lynis-git chkrootkit --noconfirm" >> /mnt/home/"$USER_NAME"/finish_install.sh
 echo "yes y | yay -Scc" >> /mnt/home/"$USER_NAME"/finish_install.sh
 echo "mv /home/"$USER_NAME"/finish_install.sh /tmp" >> /mnt/home/"$USER_NAME"/finish_install.sh
+echo "sudo systemctl enable randomhost" >> /mnt/home/"$USER_NAME"/finish_install.sh
 chmod +x /mnt/home/"$USER_NAME"/finish_install.sh
 arch-chroot /mnt locale-gen
 mkdir -p /mnt/home/"$USER_NAME"/.config/dconf
@@ -439,7 +438,13 @@ output 42 #installed extra packages
 #EOF
 #arch-chroot /mnt systemctl enable macspoof@"$INTERFACE".service
 #
-#output 43 #setup macchanger
+curl -s "https://www.behindthename.com/top/lists/"$MIRROR_COUNTRY"/2000" | grep "nlcm" | sed 's/.*nlcm">//g' | cut -d "<" -f 1 | sed "s/$/'s iPhone/" >> files/hostnames
+curl -s "https://www.behindthename.com/top/lists/"$MIRROR_COUNTRY"/2000" | grep "nlcm" | sed 's/.*nlcm">//g' | cut -d "<" -f 1 | sed "s/$/'s iPad/" >> files/hostnames
+cp files/hostnames /mnt/etc/hostnames
+cp files/change_hostname.sh /mnt/usr/bin/change_hostname.sh
+cp files/hostname_changer.service /mnt/etc/systemd/system/hostname_changer.service
+chmod 644 /mnt/etc/systemd/system/hostname_changer.service
+#output 43 #setup macchanger & hostname changer
 #--------------------------------44--------------------------------#
 umount "$DRIVE"1
 umount "$DRIVE"2
