@@ -382,9 +382,9 @@ mkdir -p "/mnt/home/$USER_NAME/.config/gtk-3.0/"
 cp files/gtk3_settings.ini /mnt/home/$USER_NAME/.config/gtk-3.0/settings.ini
 
 echo "dconf load / < /home/$USER_NAME/.config/dconf/restore" > /mnt/home/"$USER_NAME"/finish_install.sh
-echo "yay -Sy mercury-browser-bin lynis-git chkrootkit --noconfirm" >> /mnt/home/"$USER_NAME"/finish_install.sh
+echo "yay -Sy yt-dlp icecat-bin lynis-git newsboat ytsub qbittorrent chkrootkit --noconfirm" >> /mnt/home/"$USER_NAME"/finish_install.sh
 echo "yes y | yay -Scc" >> /mnt/home/"$USER_NAME"/finish_install.sh
-echo "mv /home/"$USER_NAME"/finish_install.sh /tmp" >> /mnt/home/"$USER_NAME"/finish_install.sh
+echo "mv /home/$USER_NAME/finish_install.sh /tmp" >> /mnt/home/"$USER_NAME"/finish_install.sh
 echo "sudo systemctl enable hostname_changer" >> /mnt/home/"$USER_NAME"/finish_install.sh
 chmod +x /mnt/home/"$USER_NAME"/finish_install.sh
 arch-chroot /mnt locale-gen
@@ -415,10 +415,20 @@ echo "dbus-uuidgen > /etc/machine-id" >> /mnt/home/"$USER_NAME"/.bashrc
 echo "alias ls='ls -la --color=auto'" >> /mnt/home/"$USER_NAME"/.bashrc
 echo "alias passgen='openssl rand -base64 48'" >> /mnt/home/"$USER_NAME"/.bashrc
 echo "set number" >> /mnt/home/"$USER_NAME"/.vimrc
+mkdir -p "/mnt/home/$USER_NAME/.config/mpv/"
+cp files/mpv.conf  /mnt/home/$USER_NAME/.config/mpv/mpv.conf
+mkdir -p "/mnt/home/$USER_NAME/.config/nvim/"
+cp files/init.vim  /mnt/home/$USER_NAME/.config/nvim/init.vim
+cp files/vimrc  /mnt/home/$USER_NAME/.vimrc
 
 output 41 #changed configs
 #--------------------------------42--------------------------------#
 arch-chroot /mnt yay -Sy macchanger cmus libreoffice qdirstat noto-fonts noto-fonts-extra noto-fonts-cjk ttf-liberation --noconfirm
+mkdir -p "/mnt/home/$USER_NAME/.config/cmus/"
+wget "https://github.com/S22F5/cmus_sixel/blob/main/cmus_sixel.sh" -O "/mnt/home/$USER_NAME/.config/cmus/cmus_sixel.sh"
+chmod +x "/mnt/home/$USER_NAME/.config/cmus/cmus_sixel.sh"
+arch-chroot /mnt cmus-remote -C "set status_display_program=~/.config/cmus/cmus_sixel.sh"
+
 output 42 #installed extra packages
 #--------------------------------43--------------------------------#
 #cat >> /mnt/etc/systemd/system/macspoof@.service << EOF
@@ -438,8 +448,8 @@ output 42 #installed extra packages
 #EOF
 #arch-chroot /mnt systemctl enable macspoof@"$INTERFACE".service
 #
-curl -s "https://www.behindthename.com/top/lists/"$MIRROR_COUNTRY"/2000" | grep "nlcm" | sed 's/.*nlcm">//g' | cut -d "<" -f 1 | sed "s/$/'s iPhone/" >> files/hostnames
-curl -s "https://www.behindthename.com/top/lists/"$MIRROR_COUNTRY"/2000" | grep "nlcm" | sed 's/.*nlcm">//g' | cut -d "<" -f 1 | sed "s/$/'s iPad/" >> files/hostnames
+curl -s "https://www.behindthename.com/top/lists/$MIRROR_COUNTRY/2000" | grep "nlcm" | sed 's/.*nlcm">//g' | cut -d "<" -f 1 | sed "s/$/'s iPhone/" >> files/hostnames
+curl -s "https://www.behindthename.com/top/lists/$MIRROR_COUNTRY/2000" | grep "nlcm" | sed 's/.*nlcm">//g' | cut -d "<" -f 1 | sed "s/$/'s iPad/" >> files/hostnames
 cp files/hostnames /mnt/etc/hostnames
 cp files/change_hostname.sh /mnt/usr/bin/change_hostname.sh
 cp files/hostname_changer.service /mnt/etc/systemd/system/hostname_changer.service
