@@ -67,7 +67,7 @@ outmsg=(
 "[35]setup jgmenu"
 "[36]fixed gsimplecal"
 "[37]setup themes"
-"[38]blocked webcam and microphone modules"
+"[38]blocked webcam modules"
 "[39]added kernel parameters"
 "[40]changed configs"
 "[41]fixed some permissions"
@@ -406,10 +406,11 @@ cp files/dconf_user /mnt/home/"$USER_NAME"/.config/dconf/restore
 output 37 #setup themes
 #--------------------------------38--------------------------------#
 printf "install uvcvideo /bin/false" >> /mnt/etc/modprobe.d/webcam_block.conf
-printf "install snd_hda_intel /bin/false" >> /mnt/etc/modprobe.d/microphone_block.conf
+#can cause no audio output
+#printf "install snd_hda_intel /bin/false" >> /mnt/etc/modprobe.d/microphone_block.conf
 chmod 600 /mnt/etc/modprobe.d/*.conf
 
-output 38 #blocked webcam and microphone modules
+output 38 #blocked webcam modules
 #--------------------------------39--------------------------------#
 mkdir -p /mnt/etc/sysctl.d/
 cp files/security.conf /mnt/etc/sysctl.d/security.conf
