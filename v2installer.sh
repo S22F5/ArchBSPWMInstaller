@@ -10,8 +10,10 @@ ROOT_PASSWORD='root'
 USER_PASSWORD='pass'
 #LUKS Password
 LUKS_PASSWORD='correcthorsebatterystaple'
+#GRUB Password
+GRUB_PASSWORD='grub'
 # Keymap
-KEYMAP='us'
+KEYMAP='en'
 # Mirror Country (lowercase)
 MIRROR_COUNTRY='germany'
 # Timezone in "Zone/City" Format
@@ -161,7 +163,7 @@ fi
 printf "%s" "$LUKS_PASSWORD" | cryptsetup open "$DRIVE"2 cryptroot
 mkfs.ext4 /dev/mapper/cryptroot
 
-if [[ $UEFI -gt 1 ]]
+if [[ $UEFI -gt 0 ]]
 then
 #format EFI partition
 mkfs.fat -F 32 "$DRIVE"1
@@ -254,6 +256,9 @@ arch-chroot /mnt localectl set-x11-keymap "$KEYMAP"
 
 output 21 #set installation keymap to "$KEYMAP"
 #--------------------------------22--------------------------------#
+dd bs=512 count=4 if=/dev/random iflag=fullblock | install -m 600 /dev/stdin /mnt/etc/cryptsetup-keys.d/cryptlvm.key
+printf "%s" "$LUKS_PASSWORD" | cryptsetup -v luksAddKey /dev/sda2 /mnt/etc/cryptsetup-keys.d/cryptlvm.key
+sed -i 's/FILES=()/FILES=(\/etc\/cryptsetup-keys.d\/cryptlvm.key)/g' /mnt/etc/mkinitcpio.conf
 #mkinitcpio find "keyboard" and replace with "keyboard encrypt"
 sed -i 's/(base.*/(base udev autodetect modconf kms keyboard keymap consolefont block encrypt filesystems fsck)/g' /mnt/etc/mkinitcpio.conf
 #generate initcpio
@@ -296,30 +301,37 @@ arch-chroot /mnt systemctl enable getty@tty1.service
 
 output 26 #enabled autologin
 #--------------------------------27--------------------------------#
+#create grub password
+grub_passhash="$(printf "%s\n%s" "$GRUB_PASSWORD" "$GRUB_PASSWORD" | grub-mkpasswd-pbkdf2 | sed 's/.*grub/grub/g' | tail -n1)"
+
 if [[ $UEFI -gt 0 ]]
 then
 	#install and setup grub2 for uefi
 	arch-chroot /mnt pacman -Sy chaotic-aur/grub-improved-luks2-git --noconfirm
 	arch-chroot /mnt mkdir /boot/EFI
 	arch-chroot /mnt mount "$DRIVE"1 /boot/EFI
-	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 page_alloc.shuffle=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic module.sig_enforce=1 lockdown=confidentiality quiet loglevel=0"' /mnt/etc/default/grub
+	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 page_alloc.shuffle=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic module.sig_enforce=1 lockdown=confidentiality fs.protected_fifos=2 fs.protected_regular=2 kernel.kptr_restrict=1 kernel.modules_disabled=1 kernel.sysrq=0 net.ipv4.conf.all.log_martians=1 net.ipv4.conf.default.log_martians=1 quiet loglevel=0"' /mnt/etc/default/grub
 	uuid="$(blkid "$DRIVE"2 -o value | head -n 1)"
-	sed -i "s|GRUB_CMDLINE_LINUX=.*|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$uuid:cryptroot root=/dev/mapper/cryptroot\"|" /mnt/etc/default/grub
+	sed -i "s|GRUB_CMDLINE_LINUX=.*|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$uuid:cryptroot root=/dev/mapper/cryptroot cryptkey=rootfs:/etc/cryptsetup-keys.d/cryptlvm.key\"|" /mnt/etc/default/grub
 	echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/etc/default/grub
+	printf "set superusers=root\npassword_pbkdf2 root %s\n" "$grub_passhash" >> /mnt/etc/grub.d/40_custom
 	arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --removable
+	sed -i "/\$os/s/grub_quote)'/grub_quote)' --unrestricted/" /mnt/etc/grub.d/10_linux
+	sed -i "/\$os/s/grub_quote)'/grub_quote)' --unrestricted/" /mnt/etc/grub.d/20_linux_xen
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 else
 	#install and setup grub2 for mbr/bios
 	arch-chroot /mnt pacman -Sy core/grub --noconfirm
-	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic lockdown=confidentiality quiet loglevel=0"' /mnt/etc/default/grub
+	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic lockdown=confidentialit fs.protected_fifos=2 fs.protected_regular=2 kernel.kptr_restrict=1 kernel.modules_disabled=1 kernel.sysrq=0 net.ipv4.conf.all.log_martians=1 net.ipv4.conf.default.log_martians=1 quiet loglevel=0"' /mnt/etc/default/grub
 	uuid="$(blkid "$DRIVE"2 -o value | head -n 1)"
-	sed -i "s|GRUB_CMDLINE_LINUX=.*|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$uuid:cryptroot root=/dev/mapper/cryptroot\"|" /mnt/etc/default/grub
+	sed -i "s|GRUB_CMDLINE_LINUX=.*|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$uuid:cryptroot root=/dev/mapper/cryptroot cryptkey=rootfs:/etc/cryptsetup-keys.d/cryptlvm.key\"|" /mnt/etc/default/grub
 	echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/etc/default/grub
+	printf "set superusers=root\npassword_pbkdf2 root %s\n" "$grub_passhash" >> /mnt/etc/grub.d/40_custom
+	sed -i "/\$os/s/grub_quote)'/grub_quote)' --unrestricted/" /mnt/etc/grub.d/10_linux
+	sed -i "/\$os/s/grub_quote)'/grub_quote)' --unrestricted/" /mnt/etc/grub.d/20_linux_xen
 	arch-chroot /mnt grub-install --target=i386-pc "$DRIVE"
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 fi
-
-arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 output 27 #configured grub
 #--------------------------------28--------------------------------#
@@ -420,6 +432,8 @@ cp files/mpv.conf  /mnt/home/$USER_NAME/.config/mpv/mpv.conf
 mkdir -p "/mnt/home/$USER_NAME/.config/nvim/"
 cp files/init.vim  /mnt/home/$USER_NAME/.config/nvim/init.vim
 cp files/vimrc  /mnt/home/$USER_NAME/.vimrc
+#disable coredumps
+printf "%s\n%s\n" "* hard core 0" "* soft core 0" >> /mnt/etc/security/limits.conf
 
 output 41 #changed configs
 #--------------------------------42--------------------------------#
