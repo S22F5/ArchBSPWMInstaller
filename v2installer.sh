@@ -67,10 +67,10 @@ outmsg=(
 "[35]setup jgmenu"
 "[36]fixed gsimplecal"
 "[37]setup themes"
-"[38]fixed some permissions"
-"[39]blocked webcam and microphone modules"
-"[40]added kernel parameters"
-"[41]changed configs"
+"[38]blocked webcam and microphone modules"
+"[39]added kernel parameters"
+"[40]changed configs"
+"[41]fixed some permissions"
 "[42]installed extra packages"
 "[43]setup macchanger & hostname changer"
 "[44]unmounted partitions"
@@ -405,21 +405,17 @@ cp files/dconf_user /mnt/home/"$USER_NAME"/.config/dconf/restore
 
 output 37 #setup themes
 #--------------------------------38--------------------------------#
-arch-chroot /mnt chown -R $USER_NAME home/$USER_NAME/
-
-output 38 #fixed some permissions
-#--------------------------------39--------------------------------#
 printf "install uvcvideo /bin/false" >> /mnt/etc/modprobe.d/webcam_block.conf
 printf "install snd_hda_intel /bin/false" >> /mnt/etc/modprobe.d/microphone_block.conf
 chmod 600 /mnt/etc/modprobe.d/*.conf
 
-output 39 #blocked webcam and microphone modules
-#--------------------------------40--------------------------------#
+output 38 #blocked webcam and microphone modules
+#--------------------------------39--------------------------------#
 mkdir -p /mnt/etc/sysctl.d/
 cp files/security.conf /mnt/etc/sysctl.d/security.conf
 
-output 40 #added kernel parameters
-#--------------------------------41--------------------------------#
+output 39 #added kernel parameters
+#--------------------------------40--------------------------------#
 touch /mnt/etc/machine-id
 arch-chroot /mnt chown "$USER_NAME" /etc/machine-id
 chmod 664 /mnt/etc/machine-id
@@ -435,8 +431,13 @@ cp files/vimrc  /mnt/home/$USER_NAME/.vimrc
 #disable coredumps
 printf "%s\n%s\n" "* hard core 0" "* soft core 0" >> /mnt/etc/security/limits.conf
 
-output 41 #changed configs
+output 40 #changed configs
+#--------------------------------41--------------------------------#
+arch-chroot /mnt chown -R $USER_NAME home/$USER_NAME/
+
+output 41 #fixed some permissions
 #--------------------------------42--------------------------------#
+
 arch-chroot /mnt yay -Sy macchanger cmus libreoffice qdirstat noto-fonts noto-fonts-extra noto-fonts-cjk ttf-liberation --noconfirm
 mkdir -p "/mnt/home/$USER_NAME/.config/cmus/"
 wget "https://github.com/S22F5/cmus_sixel/blob/main/cmus_sixel.sh" -O "/mnt/home/$USER_NAME/.config/cmus/cmus_sixel.sh"
