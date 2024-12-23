@@ -13,7 +13,7 @@ LUKS_PASSWORD='correcthorsebatterystaple'
 #GRUB Password
 GRUB_PASSWORD='grub'
 # Keymap
-KEYMAP='en'
+KEYMAP='us'
 # Mirror Country (lowercase)
 MIRROR_COUNTRY='germany'
 # Timezone in "Zone/City" Format
