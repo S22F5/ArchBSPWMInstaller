@@ -477,5 +477,5 @@ umount /mnt
 output 44 #unmounted partitions
 ###--------------------------------------------------------------###
 output 45 #DONE! thanks for using this script
-printf "\n once rebooted run './finish_install.sh' in your home directory"
+printf "\n once rebooted run './finish_install.sh' in your home directory\n"
 exit
