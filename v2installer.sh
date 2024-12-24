@@ -441,7 +441,7 @@ output 41 #fixed some permissions
 
 arch-chroot /mnt yay -Sy macchanger cmus libreoffice qdirstat noto-fonts noto-fonts-extra noto-fonts-cjk ttf-liberation --noconfirm
 mkdir -p "/mnt/home/$USER_NAME/.config/cmus/"
-arch-chroot /mnt wget "https://github.com/S22F5/cmus_sixel/blob/main/cmus_sixel.sh" -O "/mnt/home/$USER_NAME/.config/cmus/cmus_sixel.sh"
+arch-chroot /mnt wget "https://github.com/S22F5/cmus_sixel/blob/main/cmus_sixel.sh" -O "/home/$USER_NAME/.config/cmus/cmus_sixel.sh"
 chmod +x "/mnt/home/$USER_NAME/.config/cmus/cmus_sixel.sh"
 arch-chroot /mnt cmus-remote -C "set status_display_program=~/.config/cmus/cmus_sixel.sh"
 
