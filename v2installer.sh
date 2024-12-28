@@ -322,7 +322,7 @@ then
 else
 	#install and setup grub2 for mbr/bios
 	arch-chroot /mnt pacman -Sy core/grub --noconfirm
-	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic lockdown=confidentialit fs.protected_fifos=2 fs.protected_regular=2 kernel.kptr_restrict=1 kernel.modules_disabled=1 kernel.sysrq=0 net.ipv4.conf.all.log_martians=1 net.ipv4.conf.default.log_martians=1 quiet loglevel=0"' /mnt/etc/default/grub
+	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT="slab_nomerge init_on_alloc=1 init_on_free=1 pti=on randomize_kstack_offset=on vsyscall=none debugfs=off oops=panic lockdown=confidentiality fs.protected_fifos=2 fs.protected_regular=2 kernel.kptr_restrict=1 kernel.modules_disabled=1 kernel.sysrq=0 net.ipv4.conf.all.log_martians=1 net.ipv4.conf.default.log_martians=1 quiet loglevel=0"' /mnt/etc/default/grub
 	uuid="$(blkid "$DRIVE"2 -o value | head -n 1)"
 	sed -i "s|GRUB_CMDLINE_LINUX=.*|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$uuid:cryptroot root=/dev/mapper/cryptroot cryptkey=rootfs:/etc/cryptsetup-keys.d/cryptlvm.key\"|" /mnt/etc/default/grub
 	echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/etc/default/grub
