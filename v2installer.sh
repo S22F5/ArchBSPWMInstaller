@@ -434,7 +434,7 @@ printf "%s\n%s\n" "* hard core 0" "* soft core 0" >> /mnt/etc/security/limits.co
 
 output 40 #changed configs
 #--------------------------------41--------------------------------#
-arch-chroot /mnt chown -R $USER_NAME home/$USER_NAME/
+arch-chroot /mnt chown -R $USER_NAME /home/$USER_NAME/
 
 output 41 #fixed some permissions
 #--------------------------------42--------------------------------#
