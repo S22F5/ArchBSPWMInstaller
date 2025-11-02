@@ -391,7 +391,7 @@ mkdir -p "/mnt/home/$USER_NAME/.config/cmus/"
 arch-chroot /mnt /bin/bash -c "cd /home/$USER_NAME/.config/cmus/ && git clone https://github.com/S22F5/cmus_sixel.git && cd cmus_sixel && gcc -O3 main.c -o cmus_sixel -lsixel -lavformat -lavcodec -lswscale -lavutil && cp cmus_sixel.conf ../ && cp cmus_sixel ../cmus_sixel-tmp"
 rm -Rvf /mnt/home/"$USER_NAME"/.config/cmus/cmus-sixel
 mv /mnt/home/"$USER_NAME"/.config/cmus/cmus_sixel-tmp /mnt/home/"$USER_NAME"/.config/cmus/cmus_sixel
-arch-chroot /mnt /bin/bash -c "cmus & sleep 1 && cmus-remote -C 'set status_display_program=~/.config/cmus/cmus-sixel'" || true #doesnt work currently
+printf "set status_display_program=~/.config/cmus/cmus_sixel\nset start_view=sorted\n" > /mnt/home/"$USER_NAME"/.config/cmus/rc
 
 output 31 #installed extra packages
 ##------------------------------------------------------------------##
