@@ -175,7 +175,7 @@ fi
 
 cat > /mnt/etc/X11/xorg.conf << EOF
 Section "ServerFlags"
-    Option "DontZap"      "True"
+    Option "DontZap" "true"
 EndSection
 EOF
 
@@ -291,7 +291,7 @@ echo "placeholder" > /mnt/etc/hostname
 
 output 22 #setup networking
 ##------------------------------------------------------------------##
-arch-chroot /mnt xbindkeys --defaults > /mnt/home/$USER_NAME/.xbindkeysrc || true
+arch-chroot /mnt /bin/bash -c "xbindkeys --defaults > /home/$USER_NAME/.xbindkeysrc"
 
 output 23 #setup xbinkeys
 ##------------------------------------------------------------------##
